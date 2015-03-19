@@ -1,0 +1,98 @@
+/*
+ * This is a manifest file that'll automatically include all the stylesheets available in this directory
+ * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
+ * the top of the compiled file, but it's generally better to create a new file per style scope.
+ *= require jquery.ui.gitlab
+ *= require jquery.atwho
+ *= require select2
+ *= require highlightjs.min
+ *= require_self
+*/
+
+@import "main/variables.scss";
+@import "main/mixins.scss";
+@import "main/fonts.scss";
+@import "main/layout.scss";
+
+/**
+ * Customized Twitter bootstrap
+ */
+@import 'gl_bootstrap';
+
+/**
+ * Font icons
+ *
+ */
+@import "font-awesome";
+
+/**
+ * Generic css (forms, nav etc):
+ */
+@import "generic/avatar.scss";
+@import "generic/common.scss";
+@import "generic/typography.scss";
+@import "generic/buttons.scss";
+@import "generic/blocks.scss";
+@import "generic/ui_box.scss";
+@import "generic/issue_box.scss";
+@import "generic/files.scss";
+@import "generic/lists.scss";
+@import "generic/flash.scss";
+@import "generic/forms.scss";
+@import "generic/selects.scss";
+@import "generic/highlight.scss";
+@import "generic/scrollbar.scss";
+@import "generic/application-fonts.scss";
+
+/**
+ * Page specific styles (issues, projects etc):
+ */
+@import "sections/header.scss";
+@import "sections/nav.scss";
+@import "sections/commits.scss";
+@import "sections/diff.scss";
+@import "sections/issues.scss";
+@import "sections/projects.scss";
+@import "sections/snippets.scss";
+@import "sections/votes.scss";
+@import "sections/merge_requests.scss";
+@import "sections/graph.scss";
+@import "sections/events.scss";
+@import "sections/themes.scss";
+@import "sections/tree.scss";
+@import "sections/notes.scss";
+@import "sections/profile.scss";
+@import "sections/login.scss";
+@import "sections/editor.scss";
+@import "sections/admin.scss";
+@import "sections/wiki.scss";
+@import "sections/wall.scss";
+@import "sections/dashboard.scss";
+@import "sections/stat_graph.scss";
+@import "sections/groups.scss";
+@import "sections/test_issues.scss";
+@import "sections/summary.scss";
+@import "sections/results.scss";
+@import "sections/_spaces.scss";
+
+/**
+ * Code highlight
+ */
+@import "highlight/white.scss";
+@import "highlight/dark.scss";
+@import "highlight/solarized_dark.scss";
+@import "highlight/monokai.scss";
+
+/**
+ * UI themes:
+ */
+@import "themes/ui_basic.scss";
+@import "themes/ui_mars.scss";
+@import "themes/ui_modern.scss";
+@import "themes/ui_gray.scss";
+@import "themes/ui_color.scss";
+
+/**
+ * Styles for JS behaviors.
+ */
+@import "behaviors.scss";

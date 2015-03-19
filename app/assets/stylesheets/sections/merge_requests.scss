@@ -1,0 +1,97 @@
+
+/**
+ * MR -> show: Automerge widget
+ *
+ */
+.automerge_widget {
+  form {
+    margin-bottom: 0;
+    .clearfix {
+      margin-bottom: 0;
+    }
+  }
+
+  .accept-group {
+    label {
+      margin: 5px;
+      margin-left: 20px;
+    }
+  }
+}
+
+.merge-request .nav-tabs{
+  li {
+    a {
+      font-weight: bold;
+      padding: 8px 20px;
+      text-align: center;
+    }
+  }
+}
+
+.mr_source_commit,
+.mr_target_commit {
+  margin-top: 10px;
+  .commit {
+    margin: 0;
+    padding: 2px 0;
+    list-style: none;
+    &:hover {
+      background: none;
+    }
+  }
+}
+
+.label-branch {
+  @include border-radius(4px);
+  padding: 3px 4px;
+  border: none;
+  font-size: 14px;
+  background: #474D57;
+  color: #fff;
+  font-family: $monospace_font;
+  font-weight: normal;
+  overflow: hidden;
+
+  .label-project {
+    @include border-radius-left(4px);
+    padding: 3px 4px;
+    background: #279;
+    position: relative;
+    left: -4px;
+    letter-spacing: -1px;
+  }
+}
+
+.mr-list {
+  .merge-request {
+    padding: 10px;
+    position: relative;
+
+    .merge-request-title {
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .merge-request-info {
+      color: #999;
+    }
+  }
+}
+
+.merge-request-angle {
+  text-align: center;
+  margin: 0 auto;
+  font-size: 2em;
+  line-height: 1.1;
+}
+
+.merge-request-form-info {
+  padding-top: 15px;
+}
+
+// hide mr close link for inline diff comment form
+.diff-file .close-mr-link,
+.diff-file .reopen-mr-link {
+  display: none;
+}

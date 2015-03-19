@@ -1,0 +1,33 @@
+.project-edit-container
+  .project-edit-errors
+    = render "projects/errors"
+  .project-edit-content
+    %div
+      .form-holder
+        = form_for @project, html: { class: "edit_project form-horizontal" } do |f|
+          = render 'form_main', f: f, is_creation: is_creation
+
+          %hr
+
+          = render 'form_goals', f: f
+
+          %hr
+
+          = render 'form_jenkins', f: f, with_schedule: true
+
+          .form-actions
+            = f.submit is_creation ? "Create Project" : "Save changes", class: "btn btn-save"
+      
+      - unless is_creation
+        .prepend-top-20
+          = form_for @project, method: :delete do |f|
+            = f.submit 'Remove project', class: "btn btn-remove pull-right", data: { confirm: remove_project_message(@project) }
+
+:javascript
+  var removeButton = document.querySelector("[data-confirm]");
+  if(removeButton) {
+    removeButton.onclick = function(event) {
+      var message = event.currentTarget.getAttribute("data-confirm");
+      return confirm(message);
+    }
+  }

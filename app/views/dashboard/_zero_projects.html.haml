@@ -1,0 +1,17 @@
+%div.col-md-12
+  %div.top-img
+    = image_tag 'no-projects.png', class: 'img-responsive center-block'
+    %h1.title-green
+      You have no projects yet
+  %div
+    .project-edit-container
+      .project-edit-errors
+        = render "projects/errors"
+      .project-edit-content
+        %div
+          .form-holder
+            = form_for @project, html: { class: "edit_project form-horizontal" } do |f|
+              = render 'projects/form_main', f: f, is_creation: true
+              %div.form-group
+                %div.col-sm-10.col-sm-offset-2
+                  = f.submit 'Start now', {:class => "btn btn-new mvl", :style => "width: 108px;"}

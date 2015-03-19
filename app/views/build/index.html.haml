@@ -1,0 +1,30 @@
+%ul
+  = "Total Features: " + @build.build_stats.num_features.to_s
+%ul
+  = "Total Scenarios: " + @build.build_stats.num_scenario.to_s
+%ul
+  = "Passed Features: " + @build.build_stats.num_passed_features.to_s
+%ul
+  = "Passed Scenarios: " + @build.build_stats.num_passed_scenarios.to_s
+
+
+%ul
+  = "Bugs in Analysis: " + @build.build_stats.num_analysis_bugs.to_s
+%ul
+  = "Misses in Analysis: " + @build.build_stats.num_analysis_miss.to_s
+
+
+%ul
+  = "Bugs in Automation: " + @build.build_stats.num_automation_bugs.to_s
+%ul
+  = "Misses in Automation: " + @build.build_stats.num_automation_miss.to_s
+
+
+%ul
+  = "Bugs in Software: " + @build.build_stats.num_software_bugs.to_s
+%ul
+  = "Misses in Software: " + @build.build_stats.num_software_miss.to_s
+
+
+%ul
+  = "Bugs in Features: " + @build.build_stats.num_feature_bugs.to_s

@@ -1,0 +1,623 @@
+# Gitlab::Git::Commit is a wrapper around native Grit::Repository object
+# We dont want to use grit objects inside app/
+# It helps us easily migrate to rugged in future
+require_relative 'encoding_helper'
+require_relative 'ref'
+require 'open3'
+
+module Gitlab
+  module Git
+    class Repository
+      include Gitlab::Git::Popen
+
+      class NoRepository < StandardError; end
+
+      PARKING_BRANCH = "__parking_branch"
+
+      # Default branch in the repository
+      attr_accessor :root_ref
+
+      # Full path to repo
+      attr_reader :path
+
+      # Directory name of repo
+      attr_reader :name
+
+      # Grit repo object
+      attr_reader :grit
+
+      # Rugged repo object
+      attr_reader :rugged
+
+      def initialize(path)
+        @path = path
+        @name = path.split("/").last
+        @root_ref = discover_default_branch
+      end
+
+      def self.clone!(url, path, key)
+        authorize_hostname(url)
+        execute_repo_command(key) do |private_key_file|
+          `ssh-agent bash -c "ssh-add #{private_key_file.path} && git clone #{url} #{path}"`
+        end
+        Repository.new(path)
+      end
+
+      def pull!(key)
+        self.class.execute_repo_command(key) do |private_key_file|
+          git_dir = File.join(path, ".git")
+          cmd = "ssh-add #{private_key_file.path} && git --git-dir=#{git_dir} --work-tree=#{path} reset --hard origin/#{current_branch} && git --git-dir=#{git_dir} --work-tree=#{path} pull origin #{current_branch}"
+          `ssh-agent bash -c "#{cmd}"`
+        end
+      end
+
+      def commit!(params = {})
+        if params.include?(:current_user) && params.include?(:project) && params.include?(:ref) &&
+          params.include?(:path) && params.include?(:content) && params.include?(:commit_message) && params.include?(:key)
+          
+          begin
+            prepare_repo!(params[:current_user], params[:key])
+            # create target branch in satellite at the corresponding commit from bare repo
+            grit.git.checkout({raise: true, timeout: true, b: true}, params[:ref], "origin/#{params[:ref]}")
+
+            # update the file in the satellite's working dir
+            file_path_in_repo = File.join(grit.working_dir, params[:path])
+
+            # Prevent relative links
+            unless safe_path?(file_path_in_repo)
+              Gitlab::GitLogger.error("FileAction: Relative path not allowed")
+              return false
+            end
+
+            self.class.execute_repo_command(params[:key]) do |private_key_file|
+              git_dir = File.join(path, ".git")
+              stdin, stdout, stderr = Open3.popen3("ssh-agent bash -c \"ssh-add #{private_key_file.path} && git --git-dir=#{git_dir} --work-tree=#{path} push --dry-run origin #{params[:ref]}\"")
+
+              raise "Could not commit the changes." unless(stderr.read.include?("Everything up-to-date"))
+            end
+
+            # Write file
+            write_file(file_path_in_repo, params[:content], params[:encoding])
+
+            grit.add(file_path_in_repo)
+
+            # commit the changes
+            # will raise CommandFailed when commit fails
+            grit.git.commit(raise: true, timeout: true, a: true, m: params[:commit_message])
+
+            # push commit back to bare repo
+            # will raise CommandFailed when push fails
+            self.class.execute_repo_command(params[:key]) do |private_key_file|
+              git_dir = File.join(path, ".git")
+              `ssh-agent bash -c "ssh-add #{private_key_file.path} && git --git-dir=#{git_dir} --work-tree=#{path} push origin #{params[:ref]}"`
+            end
+            
+            true
+          rescue Grit::Git::CommandFailed => ex
+            self.class.execute_repo_command(params[:key]) do |private_key_file|
+              git_dir = File.join(path, ".git")
+              `git --git-dir=#{git_dir} --work-tree=#{path} checkout #{params[:ref]} && git --git-dir=#{git_dir} --work-tree=#{path} reset --hard`
+            end
+
+            Gitlab::GitLogger.error(ex.message)
+            false
+          rescue => e
+            self.class.execute_repo_command(params[:key]) do |private_key_file|
+              git_dir = File.join(path, ".git")
+              `git --git-dir=#{git_dir} --work-tree=#{path} checkout #{params[:ref]} && git --git-dir=#{git_dir} --work-tree=#{path} reset --hard`
+            end
+
+            Gitlab::GitLogger.error(e.message)
+            false
+          end
+        else
+          false
+        end
+      end
+
+      def delete!(params = {})
+        if params.include?(:current_user) && params.include?(:project) && params.include?(:ref) &&
+          params.include?(:path) && params.include?(:commit_message) && params.include?(:key)
+          
+          begin
+            prepare_repo!(params[:current_user], params[:key])
+            # create target branch in satellite at the corresponding commit from bare repo
+            grit.git.checkout({raise: true, timeout: true, b: true}, params[:ref], "origin/#{params[:ref]}")
+
+            # update the file in the satellite's working dir
+            file_path_in_repo = File.join(grit.working_dir, params[:path])
+
+            # Prevent relative links
+            unless safe_path?(file_path_in_repo)
+              Gitlab::GitLogger.error("FileAction: Relative path not allowed")
+              return false
+            end
+
+            self.class.execute_repo_command(params[:key]) do |private_key_file|
+              git_dir = File.join(path, ".git")
+              stdin, stdout, stderr = Open3.popen3("ssh-agent bash -c \"ssh-add #{private_key_file.path} && git --git-dir=#{git_dir} --work-tree=#{path} push --dry-run origin #{params[:ref]}\"")
+
+              raise "Could not commit the changes." unless(stderr.read.include?("Everything up-to-date"))
+            end
+
+            # Write file
+            File.delete(file_path_in_repo)
+            
+            grit.remove(file_path_in_repo)
+
+            # commit the changes
+            # will raise CommandFailed when commit fails
+            grit.git.commit(raise: true, timeout: true, a: true, m: params[:commit_message])
+
+            # push commit back to bare repo
+            # will raise CommandFailed when push fails
+            self.class.execute_repo_command(params[:key]) do |private_key_file|
+              git_dir = File.join(path, ".git")
+              `ssh-agent bash -c "ssh-add #{private_key_file.path} && git --git-dir=#{git_dir} --work-tree=#{path} push origin #{params[:ref]}"`
+            end
+            
+            true
+          rescue Grit::Git::CommandFailed => ex
+            Gitlab::GitLogger.error(ex.message)
+            false
+          rescue => e
+            Gitlab::GitLogger.error(e.message)
+            false
+          end
+        else
+          false
+        end
+      end
+
+      def current_branch
+        git_dir = File.join(path, ".git")
+        b = `git --git-dir=#{git_dir} --work-tree=#{path} rev-parse --abbrev-ref HEAD`
+
+        if(b.empty?)
+          "master"
+        else
+          b.gsub("\n", "")
+        end
+      end
+
+      def grit
+        @grit ||= Grit::Repo.new(path)
+      rescue Grit::NoSuchPathError
+        raise NoRepository.new('no repository for such path')
+      end
+
+      # Alias to old method for compatibility
+      def raw
+        grit
+      end
+
+      def rugged
+        @rugged ||= Rugged::Repository.new(path)
+      rescue Rugged::RepositoryError, Rugged::OSError
+        raise NoRepository.new('no repository for such path')
+      end
+
+      # Returns an Array of branch names
+      # sorted by name ASC
+      def branch_names
+        branches.map(&:name)
+      end
+
+      # Returns an Array of Branches
+      def branches
+        rugged.refs.select do |ref|
+          ref.name =~ /\Arefs\/remotes\/origin/
+        end.map do |rugged_ref|
+          Branch.new(rugged_ref.name, rugged_ref.target)
+        end.sort_by(&:name)
+      end
+
+      # Returns an Array of tag names
+      def tag_names
+        tags.map(&:name)
+      end
+
+      # Returns an Array of Tags
+      def tags
+        rugged.refs.select do |ref|
+          ref.name =~ /\Arefs\/tags/
+        end.map do |rugged_ref|
+          Tag.new(rugged_ref.name, rugged_ref.target)
+        end.sort_by(&:name)
+      end
+
+      # Returns an Array of branch and tag names
+      def ref_names
+        branch_names + tag_names
+      end
+
+      # Deprecated. Will be removed in 5.2
+      def heads
+        @heads ||= grit.heads.sort_by(&:name)
+      end
+
+      def has_commits?
+        !empty?
+      end
+
+      def empty?
+        rugged.empty?
+      end
+
+      def repo_exists?
+        !!rugged
+      end
+
+      # Discovers the default branch based on the repository's available branches
+      #
+      # - If no branches are present, returns nil
+      # - If one branch is present, returns its name
+      # - If two or more branches are present, returns current HEAD or master or first branch
+      def discover_default_branch
+        if branch_names.length == 0
+          nil
+        elsif branch_names.length == 1
+          branch_names.first
+        elsif branch_names.include?("master")
+          "master"
+        elsif rugged.head
+          Ref.extract_branch_name(rugged.head.name)
+        elsif
+          branch_names.first
+        end
+      end
+
+      # Archive Project to .tar.gz
+      #
+      # Already packed repo archives stored at
+      # app_root/tmp/repositories/project_name/project_name-commit-id.tag.gz
+      #
+      def archive_repo(ref, storage_path, format = "tar.gz")
+        ref = ref || self.root_ref
+        commit = Gitlab::Git::Commit.find(self, ref)
+        return nil unless commit
+
+        extension = nil
+        git_archive_format = nil
+        pipe_cmd = nil
+
+        case format
+        when "tar.bz2", "tbz", "tbz2", "tb2", "bz2"
+          extension = ".tar.bz2"
+          pipe_cmd = "bzip"
+        when "tar"
+          extension = ".tar"
+          pipe_cmd = "cat"
+        when "zip"
+          extension = ".zip"
+          git_archive_format = "zip"
+          pipe_cmd = "cat"
+        else
+          # everything else should fall back to tar.gz
+          extension = ".tar.gz"
+          git_archive_format = nil
+          pipe_cmd = "gzip"
+        end
+
+        # Build file path
+        file_name = self.name.gsub("\.git", "") + "-" + commit.id.to_s + extension
+        file_path = File.join(storage_path, self.name, file_name)
+
+        # Put files into a directory before archiving
+        prefix = File.basename(self.name) + "/"
+
+        # Create file if not exists
+        unless File.exists?(file_path)
+          FileUtils.mkdir_p File.dirname(file_path)
+          file = self.grit.archive_to_file(ref, prefix, file_path, git_archive_format, pipe_cmd)
+        end
+
+        file_path
+      end
+
+      # Return repo size in megabytes
+      def size
+        size = popen('du -s', path).first.strip.to_i
+        (size.to_f / 1024).round(2)
+      end
+
+      def search_files(query, ref = nil)
+        if ref.nil? || ref == ""
+          ref = root_ref
+        end
+
+        greps = grit.grep(query, 3, ref)
+
+        greps.map do |grep|
+          Gitlab::Git::BlobSnippet.new(ref, grep.content, grep.startline, grep.filename)
+        end
+      end
+
+      # Delegate log to Grit method
+      #
+      # Usage.
+      #   repo.log(
+      #     ref: 'master',
+      #     path: 'app/models',
+      #     limit: 10,
+      #     offset: 5,
+      #   )
+      #
+      def log(options)
+        default_options = {
+          limit: 10,
+          offset: 0,
+          path: nil,
+          ref: root_ref,
+          follow: false
+        }
+
+        options = default_options.merge(options)
+
+        commits = grit.log(
+          options[:ref] || root_ref,
+          options[:path],
+          max_count: options[:limit].to_i,
+          skip: options[:offset].to_i,
+          follow: options[:follow]
+        )
+
+        if commits.empty?
+          if options[:ref].is_a?(String)
+            ref = ref_list.find { |ref| ref[:id] =~ /.*\/#{options[:ref]}/ }[:md5]
+          else
+            ref = options[:ref].oid
+          end
+          commits = grit.commits(ref, options[:limit].to_i, options[:offset].to_i)
+        end
+
+        commits
+      end
+
+      # Delegate commits_between to Grit method
+      #
+      def commits_between(from, to)
+        grit.commits_between(from, to)
+      end
+
+      def merge_base_commit(from, to)
+        grit.git.native(:merge_base, {}, [to, from]).strip
+      end
+
+      def diff(from, to, *paths)
+        grit.diff(from, to, *paths)
+      end
+
+      # Returns commits collection
+      
+#      # Ex.
+      #   repo.find_commits(
+      #     ref: 'master',
+      #     max_count: 10,
+      #     skip: 5,
+      #     order: :date
+      #   )
+      #
+      #   +options+ is a Hash of optional arguments to git
+      #     :ref is the ref from which to begin (SHA1 or name)
+      #     :contains is the commit contained by the refs from which to begin (SHA1 or name)
+      #     :max_count is the maximum number of commits to fetch
+      #     :skip is the number of commits to skip
+      #     :order is the commits order and allowed value is :date(default) or :topo
+      #
+      def find_commits(options = {})
+        actual_options = options.dup
+
+        allowed_options = [:ref, :max_count, :skip, :contains, :order]
+
+        actual_options.keep_if do |key, value|
+          allowed_options.include?(key)
+        end
+
+        default_options = {pretty: 'raw', order: :date}
+
+        actual_options = default_options.merge(actual_options)
+
+        order = actual_options.delete(:order)
+
+        case order
+        when :date
+          actual_options[:date_order] = true
+        when :topo
+          actual_options[:topo_order] = true
+        end
+
+        ref = actual_options.delete(:ref)
+
+        containing_commit = actual_options.delete(:contains)
+
+        args = []
+
+        if ref
+          args.push(ref)
+        elsif containing_commit
+          args.push(*branch_names_contains(containing_commit))
+        else
+          actual_options[:all] = true
+        end
+
+        output = grit.git.native(:rev_list, actual_options, *args)
+
+        Grit::Commit.list_from_string(grit, output).map do |commit|
+          Gitlab::Git::Commit.decorate(commit)
+        end
+      rescue Grit::GitRuby::Repository::NoSuchShaFound
+        []
+      end
+
+      # Returns branch names collection that contains the special commit(SHA1 or name)
+      #
+      # Ex.
+      #   repo.branch_names_contains('master')
+      #
+      def branch_names_contains(commit)
+        output = grit.git.native(:branch, {contains: true}, commit)
+
+        # Fix encoding issue
+        output = EncodingHelper::encode!(output)
+
+        # The output is expected as follow
+        #   fix-aaa
+        #   fix-bbb
+        # * master
+        output.scan(/[^* \n]+/)
+      end
+
+      # Get refs hash which key is SHA1
+      # and value is ref object(Grit::Head or Grit::Remote or Grit::Tag)
+      def refs_hash
+        # Initialize only when first call
+        if @refs_hash.nil?
+          @refs_hash = Hash.new { |h, k| h[k] = [] }
+
+          grit.refs.each do |r|
+            @refs_hash[r.commit.id] << r
+          end
+        end
+        @refs_hash
+      end
+
+      # Lookup for rugged object by oid
+      def lookup(oid)
+        commit = rugged.lookup(oid)
+        commit = commit.target if commit.is_a?(Rugged::Tag::Annotation)
+
+        commit
+      end
+
+      # Return hash with submodules info for this repository
+      #
+      # Ex.
+      #   {
+      #     "rack"  => {
+      #       "id" => "c67be4624545b4263184c4a0e8f887efd0a66320",
+      #       "path" => "rack",
+      #       "url" => "git://github.com/chneukirchen/rack.git"
+      #     },
+      #     "encoding" => {
+      #       "id" => ....
+      #     }
+      #   }
+      #
+      def submodules(ref)
+        Grit::Submodule.config(grit, ref)
+      end
+
+      private
+      def ref_list
+        grit.refs_list.map do |ref|
+          { id: ref[0], md5: ref[1], type: ref[2] }
+        end
+      end
+
+      def self.authorize_hostname(url)
+        begin
+          u = URI(url)
+          hostname = u.host
+        rescue URI::InvalidURIError
+          m = url.match(/.*?@(.*)?:/)
+          hostname = m[1]
+        end
+
+        unless hostname.nil? || hostname.empty?
+          Ssh.add_host(hostname)
+        else
+          raise ArgumentError.new("Could not find hostname in url '#{url}'")
+        end
+      end
+
+      def self.execute_repo_command(key)
+        private_key_file = create_private_key_file(key)
+        yield private_key_file
+        private_key_file.close
+        private_key_file.unlink
+      end
+
+      def self.create_private_key_file(key)
+        file = Tempfile.new("#{key.user_id}.private_key")
+        file.write(key.private_key)
+        file.rewind
+        file
+      end
+
+      def write_file(abs_file_path, content, file_encoding = 'text')
+        dir_path = File.dirname(abs_file_path)
+        FileUtils.mkdir_p(dir_path)
+
+        if file_encoding == 'base64'
+          File.open(abs_file_path, 'wb') { |f| f.write(Base64.decode64(content)) }
+        else
+          File.open(abs_file_path, 'w') { |f| f.write(content) }
+        end
+      end
+
+      def safe_path?(path)
+        File.absolute_path(path) == path
+      end
+
+      def prepare_repo!(user, key)
+        clear_and_update!(key)
+
+        grit.config['user.name'] = user.name
+        grit.config['user.email'] = user.email
+      end
+
+      def clear_and_update!(key)
+        clear_working_dir!
+        delete_heads!
+        remove_remotes!
+        update_from_source!(key)
+      end
+
+      # Clear the working directory
+      def clear_working_dir!
+        grit.git.reset(hard: true)
+      end
+
+      # Deletes all branches except the parking branch
+      #
+      # This ensures we have no name clashes or issues updating branches
+      def delete_heads!
+        heads = grit.heads.map(&:name)
+
+        # update or create the parking branch
+        if heads.include? PARKING_BRANCH
+          grit.git.checkout({}, PARKING_BRANCH)
+        else
+          grit.git.checkout(default_options({b: true}), PARKING_BRANCH)
+        end
+
+        # remove the parking branch from the list of heads ...
+        heads.delete(PARKING_BRANCH)
+        # ... and delete all others
+        heads.each { |head| grit.git.branch(default_options({D: true}), head) }
+      end
+
+      # Deletes all remotes except origin
+      #
+      # This ensures we have no remote name clashes or issues updating branches
+      def remove_remotes!
+        remotes = grit.git.remote.split(' ')
+        remotes.delete('origin')
+        remotes.each { |name| grit.git.remote(default_options,'rm', name)}
+      end
+
+      # Updates the satellite from bare repo
+      def update_from_source!(key)
+        self.class.execute_repo_command(key) do |private_key_file|
+          git_dir = File.join(path, ".git")
+          `ssh-agent bash -c "ssh-add #{private_key_file.path} && git --git-dir=#{git_dir} --work-tree=#{path} fetch origin"`
+        end
+      end
+
+      def default_options(options = {})
+        {raise: true, timeout: true}.merge(options)
+      end
+    end
+  end
+end

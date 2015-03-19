@@ -1,0 +1,14 @@
+- @issues.each do |issue|
+  %li.list-group-item.trm-xs{:onclick => 'location.href=\''+project_test_issues_path({:build => @build.id, :expanded => [issue.id]})+'#block-'+issue.id.to_s+'\';', :style => 'cursor: pointer;'}
+    -if issue.dirty?
+      %p
+        'Warning: might be deprecated'
+    -class_info = get_icon_class_info(issue)
+    %i{:class => 'icon icon-fixed-width icon-large ' + class_info[:text_class] + ' ' + class_info[:icon_class], :title => class_info[:title] }
+    %small.text-primary
+      =issue.scenario.name
+    %small
+      ='Feature ' + issue.scenario.feature
+    -if(issue.scenario.is_outline?)
+      %span.label.label-inverse.pull-right
+        outline

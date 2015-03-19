@@ -1,0 +1,70 @@
+%h3.page-title Edit mode
+.file-editor
+  = form_tag(project_edit_tree_path(@project, @id), method: :put, class: "form-horizontal") do
+    .file-holder
+      .file-title
+        %i.icon-file
+        %span.file_name
+          = @path
+          %small
+            on
+            %strong= @ref
+        %span.options
+          .btn-group.tree-btn-group
+            = link_to "Cancel", @after_edit_path, class: "btn btn-tiny btn-cancel", data: { confirm: leave_edit_message }
+      .file-content.code
+        %pre#editor= @blob.data
+
+    .form-group.commit_message-group
+      = label_tag 'commit_message', class: "control-label" do
+        Commit message
+      .col-sm-10
+        = text_area_tag 'commit_message', '', placeholder: "Update #{@blob.name}", required: true, rows: 3, class: 'form-control'
+    .form-actions
+      = hidden_field_tag 'last_commit', @last_commit
+      = hidden_field_tag 'content', '', id: "file-content"
+      .commit-button-annotation
+        = button_tag "Commit changes", class: 'btn commit-btn js-commit-button btn-primary'
+        .message
+          to branch
+          %strong= @ref
+      = link_to "Cancel", @after_edit_path, class: "btn btn-cancel", data: { confirm: leave_edit_message}
+
+= javascript_include_tag 'ace/ace'
+= javascript_include_tag 'ace/mode-gherkin.js'
+= javascript_include_tag 'ace/ext-language_tools.js'
+
+:javascript
+  window.disableButtonIfEmptyField = function(field_selector, button_selector) {
+    var closest_submit, field;
+    field = $(field_selector);
+    closest_submit = field.closest("form").find(button_selector);
+    if (field.val() === "") {
+      closest_submit.disable = true;
+    }
+    return field.on("input", function() {
+      if ($(this).val() === "") {
+        return closest_submit.disable = true;
+      } else {
+        return closest_submit.disable = false;
+      }
+    });
+  };
+
+  var ace_mode = "#{@blob.language.try(:ace_mode)}";
+  ace.require("ace/ext/language_tools");
+  var editor = ace.edit("editor");
+  if (ace_mode) {
+    editor.getSession().setMode('ace/mode/' + ace_mode);
+
+    editor.setOptions({
+        enableBasicAutocompletion: true
+    });
+  }
+
+  disableButtonIfEmptyField("#commit_message", ".js-commit-button");
+
+  $(".js-commit-button").click(function(){
+    $("#file-content").val(editor.getValue());
+    $(".file-editor form").submit();
+  });

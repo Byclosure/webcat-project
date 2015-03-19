@@ -1,0 +1,37 @@
+%h3.page-title
+  Continuous Integration Server Settings:
+%fieldset
+  .form-group
+    =f.label :ci_url, class: 'control-label' do
+      URL
+    .col-sm-10= f.text_field :ci_url, placeholder: "http://jenkins.webcat.com/", class: "form-control"
+
+  .form-group
+    =f.label :ci_username, class: 'control-label' do
+      Username
+    .col-sm-10= f.text_field :ci_username, placeholder: "webcat", class: "form-control"
+
+  .form-group
+    =f.label :ci_password, class: 'control-label' do
+      Password
+    .col-sm-10= f.password_field :ci_password, class: "form-control"
+
+  .form-group
+    =f.label :ci_job_name, class: 'control-label' do
+      Job name
+    .col-sm-10= f.text_field :ci_job_name, placeholder: "awesome_job", class: "form-control"
+
+  - if(with_schedule)
+    .form-group
+      =f.label :ci_job_name, class: 'control-label' do
+        CI Job schedule
+        %span.light (optional)
+      .col-sm-10= f.text_area :ci_schedule, class: "form-control", rows: 3, maxlength: 250, disabled: (@project.nil? || !@project.has_ci_settings?)
+
+  - unless @project.path.nil?
+    %a{ href: "#{runner_configs_project_path(@project)}", id: "jenkins-configs", class: "btn btn-save pull-right" }
+      Get CI configurations
+
+    :javascript
+      var getConfigs = document.getElementById("jenkins-configs");
+      getConfigs.href += "?host=" + window.location.origin;

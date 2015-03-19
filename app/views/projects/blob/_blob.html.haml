@@ -1,0 +1,19 @@
+-if(!@is_editable)
+  %div.alert.alert-warning
+    This file cannot be edited because you may be seeing an old version.
+    =link_to 'Click here', project_blob_path(:class => "alert-link", :id => @project.repository.root_ref + '/' + @path)
+    to try to go to the current version.
+%div#tree-content-holder.tree-content-holder
+  .file-holder
+    .file-title
+      %i.icon-file
+      %span.file_name
+        = blob.name
+        %small= number_to_human_size blob.size
+      %span.options= render "actions"
+    - if blob.text?
+      = render "text", blob: blob
+    - elsif blob.image?
+      = render "image", blob: blob
+    - else
+      = render "download", blob: blob

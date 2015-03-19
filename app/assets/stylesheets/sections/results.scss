@@ -1,0 +1,30 @@
+.scenario-passed {
+  color: $brand-success;
+}
+.scenario-passed-bg {
+  background-color: $brand-success !important;
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.scenario-failed {
+  color: $brand-danger;
+}
+.scenario-failed-bg {
+  background-color: $brand-danger !important;
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.scenario-pending {
+  color: $brand-warning;
+}
+.scenario-pending-bg {
+  background-color: $brand-warning !important;
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.results-individual {
+  background: #d9edf7;
+}

@@ -1,0 +1,21 @@
+%div.pas{:class => get_step_step_style(step.result), :title => get_step_tooltip(step.result)}
+  -if(!with_thumb)
+    %i{:style => 'margin-top: 2px;', :class => 'icon icon-fixed-width icon-circle pull-right ' + get_step_icon_style(step.result)}
+  -if !step.shot.nil?
+    %div.screenshot-thumbnail.pull-right.mrm{'class' => 'block-' + block.id.to_s, 'data-toggle' => 'modal', 'data-target' => '#myModal', 'data-src' => step.shot}
+      -if(with_thumb)
+        %img{:src => step.shot}
+      -else
+        %span.mrm.text-info
+          %i.icon.icon-picture.icon-fixed-width
+  %p
+    = step.keyword + step.name
+  -if step.has_rows?
+    %div.col-xs-12
+      %div.table-responsive
+        %table.table.mbm
+          -step.rows.each do |row|
+            %tr
+              -row.each do |item|
+                %td.trm-xs
+                  = item

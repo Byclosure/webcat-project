@@ -1,0 +1,48 @@
+// Place all the styles related to the Summary controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.label a {
+  color: #fff;
+}
+.list-group-item {
+  overflow: hidden;
+}
+
+@mixin calc($property, $expression) {
+  #{$property}: -moz-calc(#{$expression});
+  #{$property}: -webkit-calc(#{$expression});
+  #{$property}: calc(#{$expression});
+}
+
+ul.list-group.issues-list {
+  @include calc( height, '100% - 38px');
+}
+* {
+  border-radius: 0 !important;
+}
+.subtitle {
+  font-weight: bold;
+  font-variant: small-caps;
+}
+.list-group-item:hover {
+  background-color: #eee;
+}
+.panel > .list-group:last-child .list-group-item:last-child {
+  border-bottom: 1px solid #ddd !important;
+}
+
+.top-img {
+  position: relative;
+  .title-green {
+    height: 4rem;
+    text-align: center;
+    color: #036854;
+    font-weight: 300;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}

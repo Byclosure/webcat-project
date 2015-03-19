@@ -1,0 +1,28 @@
+%head
+  %meta{charset: "utf-8"}
+  %title
+    = "#{title} | " if defined?(title)
+    Webcat
+  = favicon_link_tag 'favicon.ico'
+
+  = stylesheet_link_tag 'application'
+
+  = csrf_meta_tags
+  :erb
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  = render 'layouts/google_analytics' if extra_config.has_key?('google_analytics_id')
+
+= javascript_include_tag :jquery
+= javascript_include_tag 'flash'
+
+:javascript
+    if((flash = $(".flash-container")).length > 0) {
+      flash.click = function() {
+         $(this).fadeOut();
+      };
+      flash.show();
+      setTimeout(function(){ flash.fadeOut() }, 5000);
+    }
+    
+

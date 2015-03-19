@@ -1,0 +1,8 @@
+= javascript_include_tag 'bootstrap.min.js'
+
+= render 'projects/errors'
+
+= render 'projects/shared/filter_menu'
+
+-if(!@build.nil?)
+  = render 'projects/shared/blocks_body', container_class: 'results-' + (@build.individual_build? ? 'individual' : 'ci'), with_goto: false, extra_clear: true, with_thumbs: false

@@ -1,0 +1,668 @@
+v 6.7.0
+  - Add support for Gemnasium as a Project Service (Olivier Gonzalez)
+  - Add edit file button to MergeRequest diff
+  - Public groups (Jason Hollingsworth)
+  - Cleaner headers in Notification Emails (Pierre de La Morinerie)
+  - Blob and tree gfm links to anchors work
+  - Piwik Integration (Sebastian Winkler)
+  - Show contribution guide link for new issue form (Jeroen van Baarsen)
+  - Fix CI status for merge requests from fork 
+  - Added option to remove issue assignee on project issue page and issue edit page (Jason Blanchard)
+
+v 6.6.2
+  - Fix 500 error on branch/tag create or remove via UI
+
+v 6.6.1
+  - Fix 500 error on files tab if submodules presents
+
+v 6.6.0
+  - Retrieving user ssh keys publically(github style): http://__HOST__/__USERNAME__.keys
+  - Permissions: Developer now can manage issue tracker (modify any issue)
+  - Improve Code Compare page performance
+  - Group avatar
+  - Pygments.rb replaced with highlight.js
+  - Improve Merge request diff store logic
+  - Improve render performnace for MR show page
+  - Fixed Assembla hardcoded project name
+  - Jira integration documentation
+  - Refactored app/services
+  - Remove snippet expiration
+  - Mobile UI improvements (Drew Blessing)
+  - Fix block/remove UI for admin::users#show page
+  - Show users' group membership on users' activity page (Robert Djurasaj)
+  - User pages are visible without login if user is authorized to a public project
+  - Markdown rendered headers have id derived from their name and link to their id
+  - Improve application to work faster with large groups (100+ members)
+  - Multiple emails per user
+  - Show last commit for file when view file source
+  - Restyle Issue#show page and MR#show page
+  - Ability to filter by multiple labels for Issues page
+  - Rails version to 4.0.3
+  - Fixed attachment identifier displaying underneath note text (Jason Blanchard)
+
+v 6.5.1
+  - Fix branch selectbox when create merge request from fork
+
+v 6.5.0
+  - Dropdown menus on issue#show page for assignee and milestone (Jason Blanchard)
+  - Add color custimization and previewing to broadcast messages
+  - Fixed notes anchors
+  - Load new comments in issues dynamically
+  - Added sort options to Public page
+  - New filters (assigned/authored/all) for Dashboard#issues/merge_requests (sponsored by Say Media)
+  - Add project visibility icons to dashboard
+  - Enable secure cookies if https used
+  - Protect users/confirmation with rack_attack
+  - Default HTTP headers to protect against MIME-sniffing, force https if enabled
+  - Bootstrap 3 with responsive UI
+  - New repository download formats: tar.bz2, zip, tar (Jason Hollingsworth)
+  - Restyled accept widgets for MR
+  - SCSS refactored
+  - Use jquery timeago plugin
+  - Fix 500 error for rdoc files
+  - Ability to customize merge commit message (sponsored by Say Media)
+  - Search autocomplete via ajax
+  - Add website url to user profile
+  - Files API supports base64 encoded content (sponsored by O'Reilly Media)
+  - Added support for Go's repository retrieval (Bruno Albuquerque)
+
+v6.4.3
+  - Don't use unicorn worker killer if PhusionPassenger is defined
+
+v6.4.2
+  - Fixed wrong behaviour of script/upgrade.rb
+
+v6.4.1
+  - Fixed bug with repository rename
+  - Fixed bug with project transfer
+
+v 6.4.0
+  - Added sorting to project issues page (Jason Blanchard)
+  - Assembla integration (Carlos Paramio)
+  - Fixed another 500 error with submodules
+  - UI: More compact issues page
+  - Minimal password length increased to 8 symbols
+  - Side-by-side diff view (Steven Thonus)
+  - Internal projects (Jason Hollingsworth)
+  - Allow removal of avatar (Drew Blessing)
+  - Project web hooks now support issues and merge request events
+  - Visiting project page while not logged in will redirect to sign-in instead of 404 (Jason Hollingsworth)
+  - Expire event cache on avatar creation/removal (Drew Blessing)
+  - Archiving old projects (Steven Thonus)
+  - Rails 4
+  - Add time ago tooltips to show actual date/time
+  - UI: Fixed UI for admin system hooks
+  - Ruby script for easier GitLab upgrade
+  - Do not remove Merge requests if fork project was removed
+  - Improve sign-in/signup UX
+  - Add resend confirmation link to sign-in page
+  - Set noreply@HOSTNAME for reply_to field in all emails
+  - Show GitLab API version on Admin#dashboard
+  - API Cross-origin resource sharing
+  - Show READMe link at project home page
+  - Show repo size for projects in Admin area
+
+v 6.3.0
+  - API for adding gitlab-ci service
+  - Init script now waits for pids to appear after (re)starting before reporting status (Rovanion Luckey)
+  - Restyle project home page
+  - Grammar fixes
+  - Show branches list (which branches contains commit) on commit page (Andrew Kumanyaev)
+  - Security improvements
+  - Added support for GitLab CI 4.0
+  - Fixed issue with 500 error when group did not exist
+  - Ability to leave project
+  - You can create file in repo using UI
+  - You can remove file from repo using UI
+  - API: dropped default_branch attribute from project during creation
+  - Project default_branch is not stored in db any more. It takes from repo now.
+  - Admin broadcast messages
+  - UI improvements
+  - Dont show last push widget if user removed this branch
+  - Fix 500 error for repos with newline in file name
+  - Extended html titles
+  - API: create/update/delete repo files
+  - Admin can transfer project to any namespace
+  - API: projects/all for admin users
+  - Fix recent branches order
+
+v 6.2.4
+  - Security: Cast API private_token to string (CVE-2013-4580)
+  - Security: Require gitlab-shell 1.7.8 (CVE-2013-4581, CVE-2013-4582, CVE-2013-4583)
+  - Fix for Git SSH access for LDAP users
+
+v 6.2.3
+  - Security: More protection against CVE-2013-4489
+  - Security: Require gitlab-shell 1.7.4 (CVE-2013-4490, CVE-2013-4546)
+  - Fix sidekiq rake tasks
+
+v 6.2.2
+  - Security: Update gitlab_git (CVE-2013-4489)
+
+v 6.2.1
+  - Security: Fix issue with generated passwords for new users
+
+v 6.2.0
+  - Public project pages are now visible to everyone (files, issues, wik, etc.)
+    THIS MEANS YOUR ISSUES AND WIKI FOR PUBLIC PROJECTS ARE PUBLICLY VISIBLE AFTER THE UPGRADE
+  - Add group access to permissions page
+  - Require current password to change one
+  - Group owner or admin can remove other group owners
+  - Remove group transfer since we have multiple owners
+  - Respect authorization in Repository API
+  - Improve UI for Project#files page
+  - Add more security specs
+  - Added search for projects by name to api (Izaak Alpert)
+  - Make default user theme configurable (Izaak Alpert)
+  - Update logic for validates_merge_request for tree of MR (Andrew Kumanyaev)
+  - Rake tasks for web hooks management (Jonhnny Weslley)
+  - Extended User API to expose admin and can_create_group for user creation/updating (Boyan Tabakov)
+  - API: Remove group
+  - API: Remove project
+  - Avatar upload on profile page with a maximum of 100KB (Steven Thonus)
+  - Store the sessions in Redis instead of the cookie store
+  - Fixed relative links in markdown
+  - User must confirm their email if signup enabled
+  - User must confirm changed email 
+
+v 6.1.0
+  - Project specific IDs for issues, mr, milestones
+    Above items will get a new id and for example all bookmarked issue urls will change.
+    Old issue urls are redirected to the new one if the issue id is too high for an internal id.
+  - Description field added to Merge Request
+  - API: Sudo api calls (Izaak Alpert)
+  - API: Group membership api (Izaak Alpert)
+  - Improved commit diff
+  - Improved large commit handling (Boyan Tabakov)
+  - Rewrite: Init script now less prone to errors and keeps better track of the service (Rovanion Luckey)
+  - Link issues, merge requests, and commits when they reference each other with GFM (Ash Wilson)
+  - Close issues automatically when pushing commits with a special message
+  - Improve user removal from admin area
+  - Invalidate events cache when project was moved
+  - Remove deprecated classes and rake tasks
+  - Add event filter for group and project show pages
+  - Add links to create branch/tag from project home page
+  - Add public-project? checkbox to new-project view
+  - Improved compare page. Added link to proceed into Merge Request
+  - Send an email to a user when they are added to group
+  - New landing page when you have 0 projects
+
+v 6.0.0
+  - Feature: Replace teams with group membership
+    We introduce group membership in 6.0 as a replacement for teams.
+    The old combination of groups and teams was confusing for a lot of people.
+    And when the members of a team where changed this wasn't reflected in the project permissions.
+    In GitLab 6.0 you will be able to add members to a group with a permission level for each member.
+    These group members will have access to the projects in that group.
+    Any changes to group members will immediately be reflected in the project permissions.
+    You can even have multiple owners for a group, greatly simplifying administration.
+  - Feature: Ability to have multiple owners for group
+  - Feature: Merge Requests between fork and project (Izaak Alpert)
+  - Feature: Generate fingerprint for ssh keys
+  - Feature: Ability to create and remove branches with UI
+  - Feature: Ability to create and remove git tags with UI
+  - Feature: Groups page in profile. You can leave group there
+  - API: Allow login with LDAP credentials
+  - Redesign: project settings navigation
+  - Redesign: snippets area
+  - Redesign: ssh keys page
+  - Redesign: buttons, blocks and other ui elements
+  - Add comment title to rss feed
+  - You can use arrows to navigate at tree view
+  - Add project filter on dashboard
+  - Cache project graph
+  - Drop support of root namespaces
+  - Default theme is classic now
+  - Cache result of methods like authorize_projects, project.team.members etc
+  - Remove $.ready events
+  - Fix onclick events being double binded
+  - Add notification level to group membership
+  - Move all project controllers/views under Projects:: module
+  - Move all profile controllers/views under Profiles:: module
+  - Apply user project limit only for personal projects
+  - Unicorn is default web server again
+  - Store satellites lock files inside satellites dir
+  - Disabled threadsafety mode in rails
+  - Fixed bug with loosing MR comments
+  - Improved MR comments logic
+  - Render readme file for projects in public area
+
+v 5.4.2
+  - Security: Cast API private_token to string (CVE-2013-4580)
+  - Security: Require gitlab-shell 1.7.8 (CVE-2013-4581, CVE-2013-4582, CVE-2013-4583)
+
+v 5.4.1
+  - Security: Fixes for CVE-2013-4489
+  - Security: Require gitlab-shell 1.7.4 (CVE-2013-4490, CVE-2013-4546)
+
+v 5.4.0
+  - Ability to edit own comments
+  - Documentation improvements
+  - Improve dashboard projects page
+  - Fixed nav for empty repos
+  - GitLab Markdown help page
+  - Misspelling fixes
+  - Added support of unicorn and fog gems
+  - Added client list to API doc
+  - Fix PostgreSQL database restoration problem
+  - Increase snippet content column size
+  - allow project import via git:// url
+  - Show participants on issues, including mentions
+  - Notify mentioned users with email
+
+v 5.3.0
+  - Refactored services
+  - Campfire service added
+  - HipChat service added
+  - Fixed bug with LDAP + git over http
+  - Fixed bug with google analytics code being ignored
+  - Improve sign-in page if ldap enabled
+  - Respect newlines in wall messages
+  - Generate the Rails secret token on first run
+  - Rename repo feature
+  - Init.d: remove gitlab.socket on service start
+  - Api: added teams api
+  - Api: Prevent blob content being escaped
+  - Api: Smart deploy key add behaviour
+  - Api: projects/owned.json return user owned project
+  - Fix bug with team assignation on project from #4109
+  - Advanced snippets: public/private, project/personal (Andrew Kulakov)
+  - Repository Graphs (Karlo Nicholas T. Soriano)
+  - Fix dashboard lost if comment on commit
+  - Update gitlab-grack. Fixes issue with --depth option
+  - Fix project events duplicate on project page
+  - Fix postgres error when displaying network graph.
+  - Fix dashboard event filter when navigate via turbolinks
+  - init.d: Ensure socket is removed before starting service
+  - Admin area: Style teams:index, group:show pages
+  - Own page for failed forking
+  - Scrum view for milestone
+
+v 5.2.0
+  - Turbolinks
+  - Git over http with ldap credentials
+  - Diff with better colors and some spacing on the corners
+  - Default values for project features
+  - Fixed huge_commit view
+  - Restyle project clone panel
+  - Move Gitlab::Git code to gitlab_git gem
+  - Move update docs in repo
+  - Requires gitlab-shell v1.4.0
+  - Fixed submodules listing under file tab
+  - Fork feature (Angus MacArthur)
+  - git version check in gitlab:check
+  - Shared deploy keys feature
+  - Ability to generate default labels set for issues
+  - Improve gfm autocomplete (Harold Luo)
+  - Added support for Google Analytics
+  - Code search feature (Javier Castro)
+
+v 5.1.0
+  - You can login with email or username now
+  - Corrected project transfer rollback when repository cannot be moved
+  - Move both repo and wiki when project transfer requested
+  - Admin area: project editing was removed from admin namespace
+  - Access: admin user has now access to any project.
+  - Notification settings
+  - Gitlab::Git set of objects to abstract from grit library
+  - Replace Unicorn web server with Puma
+  - Backup/Restore refactored. Backup dump project wiki too now
+  - Restyled Issues list. Show milestone version in issue row
+  - Restyled Merge Request list
+  - Backup now dump/restore uploads
+  - Improved performance of dashboard (Andrew Kumanyaev)
+  - File history now tracks renames (Akzhan Abdulin)
+  - Drop wiki migration tools
+  - Drop sqlite migration tools
+  - project tagging
+  - Paginate users in API
+  - Restyled network graph (Hiroyuki Sato)
+
+v 5.0.1
+  - Fixed issue with gitlab-grit being overridden by grit
+
+v 5.0.0
+  - Replaced gitolite with gitlab-shell
+  - Removed gitolite-related libraries
+  - State machine added
+  - Setup gitlab as git user
+  - Internal API
+  - Show team tab for empty projects
+  - Import repository feature
+  - Updated rails
+  - Use lambda for scopes
+  - Redesign admin area -> users
+  - Redesign admin area -> user
+  - Secure link to file attachments
+  - Add validations for Group and Team names
+  - Restyle team page for project
+  - Update capybara, rspec-rails, poltergeist to recent versions
+  - Wiki on git using Gollum
+  - Added Solarized Dark theme for code review
+  - Don't show user emails in autocomplete lists, profile pages
+  - Added settings tab for group, team, project
+  - Replace user popup with icons in header
+  - Handle project moving with gitlab-shell
+  - Added select2-rails for selectboxes with ajax data load
+  - Fixed search field on projects page
+  - Added teams to search autocomplete
+  - Move groups and teams on dashboard sidebar to sub-tabs
+  - API: improved return codes and docs. (Felix Gilcher, Sebastian Ziebell)
+  - Redesign wall to be more like chat
+  - Snippets, Wall features are disabled by default for new projects
+
+v 4.2.0
+  - Teams
+  - User show page. Via /u/username
+  - Show help contents on pages for better navigation
+  - Async gitolite calls
+  - added satellites logs
+  - can_create_group, can_create_team booleans for User
+  - Process web hooks async
+  - GFM: Fix images escaped inside links
+  - Network graph improved
+  - Switchable branches for network graph
+  - API: Groups
+  - Fixed project download
+
+v 4.1.0
+  - Optional Sign-Up
+  - Discussions
+  - Satellites outside of tmp
+  - Line numbers for blame
+  - Project public mode
+  - Public area with unauthorized access
+  - Load dashboard events with ajax
+  - remember dashboard filter in cookies
+  - replace resque with sidekiq
+  - fix routing issues
+  - cleanup rake tasks
+  - fix backup/restore
+  - scss cleanup
+  - show preview for note images
+  - improved network-graph
+  - get rid of app/roles/
+  - added new classes Team, Repository
+  - Reduce amount of gitolite calls
+  - Ability to add user in all group projects
+  - remove deprecated configs
+  - replaced Korolev font with open font
+  - restyled admin/dashboard page
+  - restyled admin/projects page
+
+v 4.0.0
+  - Remove project code and path from API. Use id instead
+  - Return valid cloneable url to repo for web hook
+  - Fixed backup issue
+  - Reorganized settings
+  - Fixed commits compare
+  - Refactored scss
+  - Improve status checks
+  - Validates presence of User#name
+  - Fixed postgres support
+  - Removed sqlite support
+  - Modified post-receive hook
+  - Milestones can be closed now
+  - Show comment events on dashboard
+  - Quick add team members via group#people page
+  - [API] expose created date for hooks and SSH keys
+  - [API] list, create issue notes
+  - [API] list, create snippet notes
+  - [API] list, create wall notes
+  - Remove project code - use path instead
+  - added username field to user
+  - rake task to fill usernames based on emails create namespaces for users
+  - STI Group < Namespace
+  - Project has namespace_id
+  - Projects with namespaces also namespaced in gitolite and stored in subdir
+  - Moving project to group will move it under group namespace
+  - Ability to move project from namespaces to another
+  - Fixes commit patches getting escaped (see #2036)
+  - Support diff and patch generation for commits and merge request
+  - MergeReqest doesn't generate a temporary file for the patch any more
+  - Update the UI to allow downloading Patch or Diff
+
+v 3.1.0
+  - Updated gems
+  - Services: Gitlab CI integration
+  - Events filter on dashboard
+  - Own namespace for redis/resque
+  - Optimized commit diff views
+  - add alphabetical order for projects admin page
+  - Improved web editor
+  - Commit stats page
+  - Documentation split and cleanup
+  - Link to commit authors everywhere
+  - Restyled milestones list
+  - added Milestone to Merge Request
+  - Restyled Top panel
+  - Refactored Satellite Code
+  - Added file line links
+  - moved from capybara-webkit to poltergeist + phantomjs
+
+v 3.0.3
+  - Fixed bug with issues list in Chrome
+  - New Feature: Import team from another project
+
+v 3.0.2
+  - Fixed gitlab:app:setup
+  - Fixed application error on empty project in admin area
+  - Restyled last push widget
+
+v 3.0.1
+  - Fixed git over http
+
+v 3.0.0
+  - Projects groups
+  - Web Editor
+  - Fixed bug with gitolite keys
+  - UI improved
+  - Increased performance of application
+  - Show user avatar in last commit when browsing Files
+  - Refactored Gitlab::Merge
+  - Use Font Awesome for icons
+  - Separate observing of Note and MergeRequests
+  - Milestone "All Issues" filter
+  - Fix issue close and reopen button text and styles
+  - Fix forward/back while browsing Tree hierarchy
+  - Show number of notes for commits and merge requests
+  - Added support pg from box and update installation doc
+  - Reject ssh keys that break gitolite
+  - [API] list one project hook
+  - [API] edit project hook
+  - [API] list project snippets
+  - [API] allow to authorize using private token in HTTP header
+  - [API] add user creation
+
+v 2.9.1
+  - Fixed resque custom config init
+
+v 2.9.0
+  - fixed inline notes bugs
+  - refactored rspecs
+  - refactored gitolite backend
+  - added factory_girl
+  - restyled projects list on dashboard
+  - ssh keys validation to prevent gitolite crash
+  - send notifications if changed permission in project
+  - scss refactoring. gitlab_bootstrap/ dir
+  - fix git push http body bigger than 112k problem
+  - list of labels  page under issues tab
+  - API for milestones, keys
+  - restyled buttons
+  - OAuth
+  - Comment order changed
+
+v 2.8.1
+  - ability to disable gravatars
+  - improved MR diff logic
+  - ssh key help page
+
+v 2.8.0
+  - Gitlab Flavored Markdown
+  - Bulk issues update
+  - Issues API
+  - Cucumber coverage increased
+  - Post-receive files fixed
+  - UI improved
+  - Application cleanup
+  - more cucumber
+  - capybara-webkit + headless
+
+v 2.7.0
+  - Issue Labels
+  - Inline diff
+  - Git HTTP
+  - API
+  - UI improved
+  - System hooks
+  - UI improved
+  - Dashboard events endless scroll
+  - Source performance increased
+
+v 2.6.0
+  - UI polished
+  - Improved network graph + keyboard nav
+  - Handle huge commits
+  - Last Push widget
+  - Bugfix
+  - Better performance
+  - Email in resque
+  - Increased test coverage
+  - Ability to remove branch with MR accept
+  - a lot of code refactored
+
+v 2.5.0
+  - UI polished
+  - Git blame for file
+  - Bugfix
+  - Email in resque
+  - Better test coverage
+
+v 2.4.0
+  - Admin area stats page
+  - Ability to block user
+  - Simplified dashboard area
+  - Improved admin area
+  - Bootstrap 2.0
+  - Responsive layout
+  - Big commits handling
+  - Performance improved
+  - Milestones
+
+v 2.3.1
+  - Issues pagination
+  - ssl fixes
+  - Merge Request pagination
+
+v 2.3.0
+  - Dashboard r1
+  - Search r1
+  - Project page
+  - Close merge request on push
+  - Persist MR diff after merge
+  - mysql support
+  - Documentation
+
+v 2.2.0
+  - We’ve added support of LDAP auth
+  - Improved permission logic (4 roles system)
+  - Protected branches (now only masters can push to protected branches)
+  - Usability improved
+  - twitter bootstrap integrated
+  - compare view between commits
+  - wiki feature
+  - now you can enable/disable issues, wiki, wall features per project
+  - security fixes
+  - improved code browsing (ajax branch switch etc)
+  - improved per-line commenting
+  - git submodules displayed
+  - moved to rails 3.2
+  - help section improved
+
+v 2.1.0
+  - Project tab r1
+  - List branches/tags
+  - per line comments
+  - mass user import
+
+v 2.0.0
+  - gitolite as main git host system
+  - merge requests
+  - project/repo access
+  - link to commit/issue feed
+  - design tab
+  - improved email notifications
+  - restyled dashboard
+  - bugfix
+
+v 1.2.2
+  - common config file gitlab.yml
+  - issues restyle
+  - snippets restyle
+  - clickable news feed header on dashboard
+  - bugfix
+
+v 1.2.1
+  - bugfix
+
+v 1.2.0
+  - new design
+  - user dashboard
+  - network graph
+  - markdown support for comments
+  - encoding issues
+  - wall like twitter timeline
+
+v 1.1.0
+  - project dashboard
+  - wall redesigned
+  - feature: code snippets
+  - fixed horizontal scroll on file preview
+  - fixed app crash if commit message has invalid chars
+  - bugfix & code cleaning
+
+v 1.0.2
+  - fixed bug with empty project
+  - added adv validation for project path & code
+  - feature: issues can be sortable
+  - bugfix
+  - username displayed on top panel
+
+v 1.0.1
+  - fixed: with invalid source code for commit
+  - fixed: lose branch/tag selection when use tree navigation
+  - when history clicked - display path
+  - bug fix & code cleaning
+
+v 1.0.0
+  - bug fix
+  - projects preview mode
+
+v 0.9.6
+  - css fix
+  - new repo empty tree until restart server - fixed
+
+v 0.9.4
+  - security improved
+  - authorization improved
+  - html escaping
+  - bug fix
+  - increased test coverage
+  - design improvements
+
+v 0.9.1
+  - increased test coverage
+  - design improvements
+  - new issue email notification
+  - updated app name
+  - issue redesigned
+  - issue can be edit
+
+v 0.8.0
+  - syntax highlight for main file types
+  - redesign
+  - stability
+  - security fixes
+  - increased test coverage
+  - email notification

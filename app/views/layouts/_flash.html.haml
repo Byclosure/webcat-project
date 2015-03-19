@@ -1,0 +1,16 @@
+.flash-container
+  - if alert || flash[:alert]
+    .flash-alert
+      = alert || flash[:alert]
+
+  - elsif notice || flash[:notice]
+    .flash-notice
+      = notice || flash[:notice]
+
+:javascript
+  var flashContainer = document.querySelector(".flash-container")
+  var alertNotifications = document.querySelector(".flash-alert");
+  var noticeNotifications = document.querySelector(".flash-notice");
+  if(alertNotifications != null || noticeNotifications != null) {
+    flashContainer.style.display = "block";
+  }

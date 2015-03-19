@@ -1,0 +1,35 @@
+- if @project.repo_exists?
+  .col-sm-10
+    %div.tree-ref-holder
+      = render 'shared/ref_switcher', destination: 'tree', path: @path
+      %ul.breadcrumb
+        %li
+          %i.icon-angle-right
+          = link_to project_tree_path(@project, @ref) do
+            = @project.path
+        - tree_breadcrumbs(@tree, 6) do |title, path|
+          %li
+            - if path
+              = link_to truncate(title, length: 40), project_tree_path(@project, path)
+            - else
+              = link_to title, '#'
+        - if current_user && @repo.branch_names.include?(@ref)
+          %li
+            = link_to project_new_tree_path(@project, @id), title: 'New file', id: 'new-file-link' do
+              %small
+                %i.icon-plus.light
+
+  = render "update_repo", empty_repo: false
+
+  %div#tree-holder.tree-holder
+    = render "tree", tree: @tree
+- else
+  = render "empty", layout: "projects"
+
+= javascript_include_tag "select2"
+:javascript
+  $('select.select2').select2({width: 'resolve', dropdownAutoWidth: true});
+  $('.project-refs-select').on('change', function() {
+    $(this).parents('form').submit();
+  });
+    

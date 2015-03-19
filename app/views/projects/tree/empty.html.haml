@@ -1,0 +1,21 @@
+= render "projects/errors"
+
+.project-home-panel
+  .row
+    .col-sm-10
+      %h4.project-home-title
+        = @project.name_with_namespace
+    = render "update_repo", empty_repo: true
+
+  .project-home-extra.row
+    .col-md-8
+      .project-home-desc
+        - if @project.description.present?
+          = @project.description
+
+.bs-callout.bs-callout-info
+  %h4
+    Please clone your repository
+  %p
+    In order to manage your feature files, you need to clone your repository.
+    Please, click on "Clone repository" to pull your files.

@@ -1,0 +1,21 @@
+user:
+  name: "Demo"
+  email: "demo@webcatproject.com"
+  username: "demo"
+  password: "demo"
+  password_confirmation: "demo"
+  webcat_token: "39d5dc78e87dcbf47a03225e79b48dc1"
+  ssh_key:
+    private_key: "-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEAzkAHRb6+GnG6rdYM8W11hHhb1+9dqNmND43VYcHu1E3taHDr\nIZ8pd6AwgsDzwlqWQnfBbXJxOkEI8xFQN7eNSI8GIQsbCGa8zH9fR1bzBiopw10u\njLDI9kuTNlblJJs9lvB5DLxYLNmofQM+4VNgxxEdHgtqufTwTgyrPPFIZZsoRhOf\nutz7XljOiokYHLBbVceobD7uWLL+7PTeAgLvqRFwd+oxGR1kLBmIYQpR2e+60fb8\nW+cIt6FjW0Cd/oHPGWfLhF3CEWIdUwo3yBDSbInZVqtmUoq9RYcG89D64aeukYJt\nlYbkop94kwBi20+hvCvL6iswRoTFybNoC/Vy0QIDAQABAoIBAEuHpyIjd/q3K2X9\nvT+slhys9vVc8y+ie8X2au4h1xRodUiKEZF+d/EW+KzpfFrwUZaFxJAQGOb8agqZ\njIba8SJhPh1bs8qf1QQOoRW/AcCAMEsbFLDxDKclhgOgTsnZD/T2m13Om3vROaKO\nTbi2j/pWihM2mx7+VAJBIXRv59NNFjd1ILna7CfAaMq9fWESn+tDc+HerflUKcYk\ncc4HPX/F+7Zjcfw3cJsGYj2OJTMgP54it0h4O9ick74waU90p0yUayjt8sbi02iS\nyLpdUCIROH1C3WGNEK93ncq2qp/BT0IEDm4L0xGlVbmU95JhU8k2VnkYa8TEJjIs\n1mdS5AECgYEA8MFzQ3tPCYNvgfJ9h7eg1s4buakD1VDy0cj4dYEjOa1lEf7Z2B/Z\ng5EURtSZNxMALf6tKs1gwxMH8BAXvCgvbWrAv93lhR2Lsob4QElSKJUTWK00IxAV\nNgBBhQ9qJ1EYEJjURVBqzM0ejlSV8A7Vxoh9cJ202B2ZOvlEc4QlBu0CgYEA209B\n5PaOONLtN/64MS2YClrrxWeONs+/zUlhh14hznv6Pb5dDuhwdIwZFSIcxBCbCnQI\nDdp58CFEU5r8xSqnIX+YHW2KX+M5H5UMqYfldqX0gzz4r2pInoSrxBYEotsvitI+\ntQwrGZFRZByCgAhI+tVddsg1GQsN5mUNPgsg2vUCgYBTPV9fzot2K5ZrJG8YdHnM\nqvhVCcXEhDdgJw8YeWy3bWcLgMTK/8ARyCBtmOXcb9pZDLvMl7PD3pmY+8dpC6/S\nMd2wuMS5cIyzTg0ZFQCt/VTyDPiAwvfCcvY0Ti8SpuweGOkTiglTA/xzk3U/ybFJ\n8jkErdIwApPPGw36ro6qxQKBgA5IPxZWKDTzJ5e58uzg90HVYf1dHRnctbT8zmku\nbC0yTb2vpAfQg2JTrV5+9jiejDpGDDA6xi4pPHXlZgjBGllIIfPoqlZMSfAQmN6B\nhyQO8rmJQvjJhykrorQGaw7gD1yPDJ5lyHjFyfMnGCiWYYpUUt3lc+/JlIIompAr\n0VvxAoGAOZjV9HpzLsLfd5WBj8GYw6wC4EclLjQ+/L8l3qK8pV41eZRvgPOAw+Xh\np/8WHBJSMojFcmqz9+/V4Zp9q/FwoU35g1Zg1yaqmxnLovAYCYmncvCpm60fx51o\nFwb1jQ1RMvZkyjcGhLmjEwZkBfM0qKLpXBIiUf2tSomIX1ugLjo=\n-----END RSA PRIVATE KEY-----"
+    public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDOQAdFvr4acbqt1gzxbXWEeFvX712o2Y0PjdVhwe7UTe1ocOshnyl3oDCCwPPCWpZCd8FtcnE6QQjzEVA3t41IjwYhCxsIZrzMf19HVvMGKinDXS6MsMj2S5M2VuUkmz2W8HkMvFgs2ah9Az7hU2DHER0eC2q59PBODKs88UhlmyhGE5+63PteWM6KiRgcsFtVx6hsPu5Ysv7s9N4CAu+pEXB36jEZHWQsGYhhClHZ77rR9vxb5wi3oWNbQJ3+gc8ZZ8uEXcIRYh1TCjfIENJsidlWq2ZSir1Fhwbz0Prhp66Rgm2VhuSin3iTAGLbT6G8K8vqKzBGhMXJs2gL9XLR"
+project:
+  name: "Demo Project"
+  test_path: "src/test/resources"
+  git_url: "git@bitbucket.org:byclosure/easyeasyapps-webcat-tests.git"
+  webcat_token: "9e40a95a60a6f1f03e644ccbecb1f5f6"
+  passed_goal: 100
+  automation_goal: 90
+  ci_url: "http://jenkins.byclosure.com:23080/"
+  ci_username: "webcat"
+  ci_password: "webcatam0s"
+  ci_job_name: "eea"

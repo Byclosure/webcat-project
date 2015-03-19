@@ -1,0 +1,63 @@
+-if(issue.category == ScenarioCategories::WIPANALYSIS)
+  %div.pam.mbm.warning
+    %p
+      -issue.scenario.tags.each do |tag|
+        -if(tag.casecmp(ScenarioCategories::WIP) == 0)
+          %span.label.label-danger=tag + ' '
+        -else
+          %span.label.label-default=tag + ' '
+    %p
+      Did you forget to remove the
+      %span.label.label-danger
+        @wip
+      (work-in-progress) tag?
+-elsif(issue.category == ScenarioCategories::FAILEDBUG)
+  %div.pam.mbm.warning
+    %p
+      A step has failed.
+    = render 'projects/shared/step', block: issue, step: issue.problem_step, with_thumb: true
+    %p
+      There may be a problem with the step implementation or with the software.
+    -if(!issue.problem_step.error.nil?)
+      %a{:href => '#', :class=> 'center-block', :id => 'pre-show-link-'+issue.id.to_s, :onclick => 'togglePre(event, '+issue.id.to_s+')'}
+        %b
+          Show raw error
+          %i.icon.icon-caret-down.icon-fixed-width
+      %a{:href => '#', :class=> 'mbm center-block', :id => 'pre-hide-link-'+issue.id.to_s, :onclick => 'togglePre(event, '+issue.id.to_s+')', :style => 'display:none;'}
+        %b
+          Hide raw error
+          %i.icon.icon-caret-up.icon-fixed-width
+      %pre{:id => 'pre-'+issue.id.to_s, :style => 'display:none;'}
+        = issue.problem_step.error
+-elsif(issue.category == ScenarioCategories::REGRESSIONBUG)
+  %div.pam.mbm.warning
+    %p
+      A regression bug has been detected. This scenario has passed in the past.
+    = render 'projects/shared/step', block: issue, step: issue.problem_step, with_thumb: true
+    %p
+      There might be a problem with the step implementation or with the software. Please refer to Scenario Results for past results.
+    -if(!issue.problem_step.error.nil?)
+      %a{:href => '#', :class=> 'center-block', :id => 'pre-show-link-'+issue.id.to_s, :onclick => 'togglePre(event, '+issue.id.to_s+')'}
+        %b
+          Show raw error
+          %i.icon.icon-caret-down.icon-fixed-width
+      %a{:href => '#', :class=> 'mbm center-block', :id => 'pre-hide-link-'+issue.id.to_s, :onclick => 'togglePre(event, '+issue.id.to_s+')', :style => 'display:none;'}
+        %b
+          Hide raw error
+          %i.icon.icon-caret-up.icon-fixed-width
+      %pre{:id => 'pre-'+issue.id.to_s, :style => 'display:none;'}
+        = issue.problem_step.error
+-elsif(issue.category == ScenarioCategories::PENDINGBUG)
+  %div.pam.mbm.warning
+    %p
+      A step is pending
+    = render 'projects/shared/step', block: issue, step: issue.problem_step, with_thumb: true
+    %p.mtm
+      Possible solutions for this problem include:
+      %ul
+        %li
+          Change an existing template to match the step I'm missing definition
+        %li
+          Change the step to match an existing step definition template
+        %li
+          Create a new step definition that match the step I'm missing definition

@@ -1,0 +1,42 @@
+%div.accordion.col-md-10
+  - @blocks_by_feature.keys.sort.each do |feature|
+    %div.panel.panel-default{:class => container_class}
+      %div.panel-body
+        %h4.text-primary
+          ='Feature ' + feature
+        - @blocks_by_feature[feature].each do |block|
+          %div.panel.panel-default
+            -class_info = get_icon_class_info(block)
+            %div{:class => 'panel-heading ' + class_info[:bg_class], :id => 'collapsed-'+block.id.to_s, :onclick => '$(\'#expanded-'+block.id.to_s+'\').toggle(\'fast\')'}
+              %a{:name => 'block-'+block.id.to_s}
+              = render 'projects/shared/collapsed_block', block: block, class_info: class_info
+            = render 'projects/shared/expanded_block', block: block, with_goto: with_goto
+
+  -if(@blocks_by_feature.length > 0)
+    = render 'projects/shared/navigation'
+
+:plain
+  <!-- Modal -->
+  <!--div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"-->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    </div>
+    <img class="img-responsive center-block" id="modalImage">
+  </div>
+
+:javascript
+  $('#myModal').on('show.bs.modal', function (event) {
+    var thumb = $(event.relatedTarget)
+    var recipient = thumb.attr('data-src')
+
+    var modal = $(this)
+    modal.find('#modalImage').attr('src', recipient)
+  })
+
+  togglePre = function (event, issue_id) {
+    event.preventDefault();
+    $('#pre-'+issue_id).toggle('fast');
+    $('#pre-show-link-'+issue_id).toggle()
+    $('#pre-hide-link-'+issue_id).toggle()
+  }

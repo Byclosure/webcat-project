@@ -1,0 +1,24 @@
+%nav
+  %ul.pagination.pagination-sm
+    -if(@page_num == 1)
+      %li{:class => 'disabled'}
+        %a{:href => '#'}
+          <
+    -else
+      %li
+        = link_to '<', move_to_page_param(params, @page_num-1)
+    -(1..@num_pages).each do |page_n|
+      -if(@page_num == page_n)
+        %li{:class => 'active'}
+          %a{:href => '#'}
+            =page_n.to_s
+      -else
+        %li
+          = link_to page_n.to_s, move_to_page_param(params, page_n)
+    -if(@page_num == @num_pages)
+      %li{:class => 'disabled'}
+        %a{:href => '#'}
+          >
+    -else
+      %li
+        = link_to '>', move_to_page_param(params, @page_num+1)

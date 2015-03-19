@@ -1,0 +1,22 @@
+%div.panel-body.expanded{:id => 'expanded-'+block.id.to_s, :style => (in_expanded?(params, block.id)?:'':'display:none;')}
+  -if(block.is_a? TestIssue)
+    = render 'issue_description', issue: block
+  %div.pam
+    %p
+      -get_scenario(block).tags.each do |tag|
+        %span.label.label-default=tag + ' '
+    = render 'projects/shared/scenario_description', block: block
+    - scenario = get_scenario(block)
+    %div.pull-left.ptl
+      -if(with_goto)
+        =link_to 'Goto scenario result', project_results_path({:build => @build.id, :build_type => @build.build_type, :expanded => [scenario.id]})+'#block-'+scenario.id.to_s
+      -else
+        -previous_run = scenario.previous_runs.last
+        -if(!previous_run.nil?)
+          =link_to 'Goto previous result', project_results_path({:build => previous_run.build.id, :build_type => previous_run.build.build_type, :expanded => [previous_run.id]})+'#block-'+previous_run.id.to_s
+    %div.pull-right.ptl
+      -if(@feature_root.nil?)
+        %p{:title => 'To enable this link, please clone the repository'}
+          Goto Feature
+      -else
+        =link_to 'Goto Feature', project_blob_path(:id => @feature_root + get_scenario(block).uri)

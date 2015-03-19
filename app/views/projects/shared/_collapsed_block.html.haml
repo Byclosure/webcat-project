@@ -1,0 +1,9 @@
+%div.collapsed
+  %i{:class => 'icon icon-fixed-width icon-large ' + class_info[:icon_class]}
+  %small.trm-xs
+    =get_scenario(block).name
+  %div.pull-right.plm
+    -if(get_scenario(block).is_outline?)
+      %span.label.label-inverse.mrm
+        outline
+    %i.icon.icon-angle-down.icon-large.icon-fixed-width

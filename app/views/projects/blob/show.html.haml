@@ -1,0 +1,41 @@
+= javascript_include_tag "lib/jquery.timeago"
+
+%div.tree-ref-holder
+  = render 'shared/ref_switcher', destination: 'blob', path: @path
+  %ul.breadcrumb
+    %li
+      %i.icon-angle-right
+      = link_to project_tree_path(@project, @ref) do
+        = @project.path
+    - tree_breadcrumbs(@tree, 6) do |title, path|
+      %li
+        - if path
+          - if path.end_with?(@path)
+            = link_to project_blob_path(@project, path) do
+              %span.cblue
+                = truncate(title, length: 40)
+          - else
+            = link_to truncate(title, length: 40), project_tree_path(@project, path)
+        - else
+          = link_to title, '#'
+
+%ul.blob-commit-info.bs-callout.bs-callout-info
+  - blob_commit = @repository.last_commit_for_path(@commit.id, @blob.path)
+  = render blob_commit, project: @project
+
+%div#tree-holder.tree-holder
+  = render 'blob', blob: @blob
+
+%div.run-single-holder
+  -if @blob.is_feature?
+    .form-holder
+      = form_for @project, url: ci_build_single_project_path(@project, @commit.id, @blob.path), method: :post do |f|
+        = f.submit "Run now", class: "btn btn-primary", disabled: !@project.has_ci_settings?
+
+= javascript_include_tag "select2"
+:javascript
+  $('select.select2').select2({width: 'resolve', dropdownAutoWidth: true});
+  $('.project-refs-select').on('change', function() {
+    $(this).parents('form').submit();
+  });
+

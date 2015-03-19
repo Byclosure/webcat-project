@@ -1,0 +1,8 @@
+- builds.reverse.each do |build|
+  %li.list-group-item.trm-xs{:onclick => 'location.href=\''+project_results_path({:build => build.id, :build_type => build.build_type})+'\';', :style => 'cursor: pointer;'}
+    - if(build.individual_build?)
+      %i{:class => 'icon icon-fixed-width icon-large icon-file-alt'}
+    - else
+      %i{:class => 'icon icon-fixed-width icon-large icon-copy'}
+    %small.text-primary
+      = build.pretty_name

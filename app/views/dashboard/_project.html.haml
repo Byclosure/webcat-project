@@ -1,0 +1,49 @@
+%div.col-md-3
+  = link_to project_summary_index_path(project), class: dom_class(project) do
+    %div.panel.panel-default
+      %div.panel-body
+      - if(@projects_charts[project.id].nil?)
+        %h1.text-center
+          %i.icon.icon-warning-sign.icon-4x.text-warning
+          %small.center-block
+            No Runs
+      - else
+        %div{:class => 'breakdown-chart-'+project.id.to_s}
+          %svg{:style => 'width:100%;min-height:173px;'}
+      %h2.text-primary.text-center.trm-xs
+        = project.name
+      %div.panel-footer
+        %p.text-center
+          - if(project.builds.empty?)
+            No runs yet
+          - else
+            = 'Last run ' + project.builds.last.pretty_name
+        %h3.text-primary.text-center.mbs
+          = project.users.length
+        %p.text-center
+          Members
+
+:javascript
+  if(#{!@projects_charts[project.id].nil?}) {
+    nv.addGraph(function() {
+      var chart = nv.models.pieChart()
+          .x(function(d) { return d.label })
+          .y(function(d) { return d.value })
+          .valueFormat(d3.format('d'))
+          .showLabels(false)
+          .showLegend(false)
+          .labelThreshold(.05)
+          .labelType("value")
+          .donut(true)
+          .donutRatio(0.35)
+          .color(['#d9534f', '#c0392b', '#f0ad4e', '#777'])
+          ;
+
+        d3.select(".breakdown-chart-"+#{project.id.to_s}+" svg")
+            .datum(#{@projects_charts[project.id].to_json})
+            .transition().duration(350)
+            .call(chart);
+
+      return chart;
+      });
+  }

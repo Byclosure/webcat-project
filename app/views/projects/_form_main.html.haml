@@ -1,0 +1,33 @@
+%h3.page-title
+  Project settings:
+
+%fieldset
+  .form-group.project_name_holder
+    = f.label :name, class: 'control-label' do
+      Project name
+    .col-sm-10
+      = f.text_field :name, placeholder: "Example Project", class: "form-control", required: true
+
+  .form-group.project_name_holder
+    = f.label :git_url, class: 'control-label' do
+      Git URL
+    .col-sm-10
+      = f.text_field :git_url, placeholder: "https://github.com/webcat/webcat.git", class: "form-control", required: true, disabled: !is_creation
+
+  .form-group
+    = f.label :description, class: 'control-label' do
+      Project description
+      %span.light (optional)
+    .col-sm-10
+      = f.text_area :description, placeholder: "Awesome project", class: "form-control", rows: 3, maxlength: 250
+
+  - if @repository && @repository.exists? && @repository.branch_names.any?
+    .form-group
+      = f.label :default_branch, "Default Branch", class: 'control-label'
+      .col-sm-10= f.select(:default_branch, @repository.branch_names, {}, {class: 'select2 select-wide'})
+
+  .form-group.project_name_holder
+    = f.label :test_path, class: 'control-label' do
+      Tests root path
+    .col-sm-10
+      = f.text_field :test_path, placeholder: 'src/test/resources/', class: "form-control", required: true

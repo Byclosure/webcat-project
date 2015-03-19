@@ -1,0 +1,35 @@
+%h3.page-title
+  Users with access to this project
+
+  - if can? current_user, :admin_team_member, @project
+    %span.pull-right
+      = link_to new_project_team_member_path(@project), class: "btn btn-new btn-grouped", title: "New project member" do
+        New project member
+      = link_to import_project_team_members_path(@project), class: "btn btn-grouped", title: "Import members from another project" do
+        Import members
+
+= render "team", members: @users_projects
+- if @group
+  = render "group_members"
+
+:javascript
+  var removeButtons = $(".btn-tiny.btn.btn-remove");
+  $.each(removeButtons, function(index, removeButton) {
+    removeButton.onclick = function(event) {
+      var button = event.currentTarget;
+      var message = button.getAttribute("data-confirm");
+      var confirmRsp = confirm(message);
+      if(confirmRsp) {
+        $.ajax({
+          url: button.href,
+          type: button.getAttribute("data-method").toUpperCase(),
+          dataType: "json",
+          data: { authenticity_token: "#{form_authenticity_token}", commit: "" }
+        }).complete(function() {
+          window.location.reload(true);
+        });
+      }
+      return false;
+    };
+  });
+  

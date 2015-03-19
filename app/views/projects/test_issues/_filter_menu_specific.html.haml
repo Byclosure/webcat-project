@@ -1,0 +1,16 @@
+%div.panel-heading
+  %b
+    TYPE
+%ul.list-group
+  %li.list-group-item{'class' => has_param?(params, {:filter_type => ScenarioCategories::FAILEDBUG }) ? 'active-filter' : 'inactive-filter'}
+    =link_to 'Bug',
+      add_or_remove_param(params, {:filter_type => ScenarioCategories::FAILEDBUG })
+  %li.list-group-item{'class' => has_param?(params, {:filter_type => ScenarioCategories::REGRESSIONBUG }) ? 'active-filter' : 'inactive-filter'}
+    =link_to 'Regression Bug',
+      add_or_remove_param(params, {:filter_type => ScenarioCategories::REGRESSIONBUG })
+  %li.list-group-item{'class' => has_param?(params, {:filter_type => ScenarioCategories::PENDINGBUG }) ? 'active-filter' : 'inactive-filter'}
+    =link_to 'Missing Automation',
+      add_or_remove_param(params, {:filter_type => ScenarioCategories::PENDINGBUG })
+  %li.list-group-item{'class' => has_param?(params, {:filter_type => ScenarioCategories::WIPANALYSIS }) ? 'active-filter' : 'inactive-filter'}
+    =link_to 'WIP Analysis',
+      add_or_remove_param(params, {:filter_type => ScenarioCategories::WIPANALYSIS })

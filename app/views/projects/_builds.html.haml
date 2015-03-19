@@ -1,0 +1,25 @@
+.tab-content
+  .tab-pane.active#builds
+    .ui-box
+      %ul.well-list.dash-list{class: ("unstyled" if with_status)}
+        - @builds.each do |build|
+          %li.project-row{class: (build.status == "SUCCESS" ? "success-row" : "alert-row" if with_status)}
+            - if with_links
+              %a.project{data: { url: build.url, status: build.status }, href: "#"}
+                %span.str-truncated
+                  %span.project-name.filter-title
+                    - if build.type == Project::CiBuild::ALL
+                      = "Build \##{build.number}"
+                    - else
+                      = "Test \##{build.number}"
+            - else
+              %span.str-truncated
+                %span.project-name.filter-title
+                  - if build.type == Project::CiBuild::ALL
+                    = "Build \##{build.number}"
+                  - else
+                    = "Test \##{build.number}"
+
+        - if @builds.empty?
+          %li
+            .nothing-here-block There are no builds

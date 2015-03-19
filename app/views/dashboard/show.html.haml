@@ -1,0 +1,28 @@
+- if @has_authorized_projects
+  .dashboard.row
+    = render 'projects_container'
+
+- else
+  = render 'zero_projects'
+
+:javascript
+   (function() {
+      $(".dash-filter").keyup(function() {
+        var terms, uiBox;
+        terms = $(this).val();
+        uiBox = $(this).parents('.ui-box').first();
+        if (terms === "" || terms === void 0) {
+          return uiBox.find(".dash-list li").show();
+        } else {
+          return uiBox.find(".dash-list li").each(function(index) {
+            var name;
+            name = $(this).find(".filter-title").text();
+            if (name.toLowerCase().search(terms.toLowerCase()) === -1) {
+              return $(this).hide();
+            } else {
+              return $(this).show();
+            }
+          });
+        }
+      });
+    })();

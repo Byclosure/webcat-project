@@ -1,0 +1,16 @@
+%tr{ class: "tree-item #{tree_hex_class(blob_item)}" }
+  %td.tree-item-file-name
+    = tree_icon(type)
+    %span.str-truncated
+      = link_to blob_item.name, project_blob_path(@project, tree_join(@id || @commit.id, blob_item.name))
+  %td.tree_time_ago.cgray
+    - blob_last_commit = @repo.last_commit_for_path(@commit.id, blob_item.path)
+    %time{ class: "time_ago", datetime: blob_last_commit[:committed_date]}
+      = time_ago_in_words(blob_last_commit[:committed_date]) + " ago"
+  %td.tree_commit{ colspan: 2 }
+    %span.str-truncated
+      %span.tree_author
+        %span.commit-author-name
+          = image_tag avatar_icon(blob_last_commit[:committer_email]), :class => "avatar s16"
+          = mail_to blob_last_commit[:committer_email], blob_last_commit[:committer_name], :class => "commit-author-link has_tooltip"
+      =link_to blob_last_commit[:message], project_commit_path(@project, blob_last_commit), :class => "tree-commit-link" 

@@ -1,0 +1,24 @@
+- empty_repo = @project.repo_exists? || @project.empty_repo?
+.project-home-panel{:class => ("empty-project" if empty_repo)}
+  .row
+    .col-sm-10
+      %h4.project-home-title
+        = @project.name_with_namespace
+
+  .project-home-extra.row
+    .col-md-8
+      .project-home-desc
+        - if @project.description.present?
+          = @project.description
+        
+    - unless empty_repo
+      .col-md-4
+        .project-home-links
+          %span.light.prepend-left-20
+            = pluralize(@repository.round_commit_count, 'commit')
+          %span.light.prepend-left-20
+            = pluralize(@repository.branch_names.count, 'branch')
+          %span.light.prepend-left-20
+            = pluralize(@repository.tag_names.count, 'tag')
+          %span.light.prepend-left-20
+            = repository_size

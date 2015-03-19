@@ -1,0 +1,18 @@
+%header.navbar.navbar-static-top.navbar-gitlab
+  .navbar-inner
+    .container
+      %div.app_logo
+        %span.separator
+        = link_to public_root_path, class: "home" do
+          %h1 WEBCAT
+        %span.separator
+      %h1.title= title
+
+      .pull-right
+        = link_to "Sign in", new_session_path(:user), class: 'btn btn-sign-in btn-new'
+
+      %ul.nav.navbar-nav
+        %li
+          %a
+            %div.hide.turbolink-spinner
+              %i.icon-refresh.icon-spin

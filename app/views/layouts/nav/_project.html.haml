@@ -1,0 +1,30 @@
+%ul
+  -#= nav_link(controller: %w(summary), html_options: {class: "home"}) do
+  -#  = link_to "Dashboard", controller: "projects/summary", action: "index" #, id: @project# do
+    -#= link_to project_summary_path(@project), title: "Dashboard" do
+    -#  Dashboard
+
+  = nav_link(controller: %w(summary)) do
+    = link_to project_summary_index_path(@project), title: "Dashboard" do
+      Dashboard
+
+  = nav_link(controller: %w(test_issues)) do
+    = link_to project_test_issues_path(@project), title: "Issues" do
+      Issues
+
+  = nav_link(controller: %w(results)) do
+    = link_to project_results_path(@project), title: "Scenario Results" do
+      -# %i.icon-home
+      Scenario Results
+
+  - if can? current_user, :admin_team_member, @project
+    = nav_link(controller: %w(tree blob blame edit_tree new_tree)) do
+      - unless @project.empty_repo?
+        = link_to 'Features', project_tree_path(@project, @ref || @project.repository.root_ref)
+      - else
+        = link_to 'Features', project_tree_path(@project, "[no_ref]")
+
+  - if can? current_user, :admin_team_member, @project
+    = nav_link(html_options: {class: "#{project_tab_class}"}) do
+      = link_to edit_project_path(@project), class: "stat-tab tab " do
+        Settings

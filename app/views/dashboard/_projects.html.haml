@@ -1,0 +1,10 @@
+= stylesheet_link_tag 'nv.d3.min.css'
+= javascript_include_tag 'd3.v2.min.js'
+= javascript_include_tag 'nv.d3.min.js'
+
+%div.col-md-12
+  = link_to new_project_path,{:class => "btn btn-new mbl", :style => "width: 108px;margin: 0 auto;display: block;"} do
+    %i.icon-plus
+    New project
+- @projects.each do |project|
+  = render 'project', project: project

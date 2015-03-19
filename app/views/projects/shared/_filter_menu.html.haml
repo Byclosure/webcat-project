@@ -1,0 +1,13 @@
+%div.col-md-2
+  -if(!@build.nil?)
+    %h4.trm-sm.text-primary
+      %b
+        - if(@build.individual_build?)
+          Feature Run
+        - else
+          Complete Run
+    %h5.trm-sm.text-primary
+      %b
+        = @build.pretty_name
+  %div.panel.panel-default.filter-menu
+    =render 'filter_menu_specific'

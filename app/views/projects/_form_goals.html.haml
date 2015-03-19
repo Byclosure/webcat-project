@@ -1,0 +1,12 @@
+%h3.page-title
+  Project Goals (%):
+%fieldset
+  .form-group
+    =f.label :passed_goal, class: 'control-label' do
+      Passed Features Goal
+    .col-sm-10= f.text_field :passed_goal, placeholder: "100", class: "form-control"
+
+  .form-group
+    =f.label :automation_goal, class: 'control-label' do
+      Automation Completion Goal
+    .col-sm-10= f.text_field :automation_goal, placeholder: "90", class: "form-control"

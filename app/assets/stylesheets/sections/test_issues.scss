@@ -1,0 +1,133 @@
+.screenshot-thumbnail{
+  cursor: pointer;
+  img {
+    max-height: 130px;
+    max-width: 130px;
+  }
+}
+#modalImage {
+  max-height: 90vh;
+  max-width: 90vw;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.modal-header .close {
+  color: white;
+  font-size: 26px;
+}
+
+.modal-dialog {
+  margin: 0 auto;
+}
+.panel-body {
+  margin-bottom: 0;
+}
+
+.step-passed {
+  
+}
+.step-skipped {
+  
+}
+.step-failed {
+  background: rgba($brand-danger,.3);
+  font-weight: bold;
+}
+.step-undefined,
+.step-pending,
+.step-missing {
+  background: rgba(#fff879,.5);
+  font-weight: bold;
+}
+
+/* color for types of issues */
+.wip-analysis {
+  color: $gray-light;
+}
+.wip-analysis-bg {
+  background-color: $gray-light !important;
+  color:#fff !important;
+  font-weight: bold;
+}
+.missing-automation {
+  color: $brand-warning;
+}
+.missing-automation-bg {
+  background-color: $brand-warning !important;
+  color:#fff !important;
+  font-weight: bold;
+}
+.failed-bug {
+  color: $brand-danger;
+}
+.failed-bug-bg {
+  background-color: $brand-danger !important;
+  color:#fff !important;
+  font-weight: bold;
+}
+.regression-bug {
+  color: #c0392b;
+}
+.regression-bug-bg {
+  background-color: #c0392b !important;
+  color:#fff !important;
+  font-weight: bold;
+}
+
+.panel-body.expanded > .pam {
+  background-color: #f6f9fb;
+  color: $gray-darker;
+  border-left: 2px solid #ddd;
+  pre {
+    max-height: 160px;
+    overflow-y: auto;
+  }
+  &.mbm.warning {
+    border-left: 2px solid $brand-danger;
+  }
+  &.mbm.info {
+    border-left: 2px solid $brand-info;
+  }
+  > div {
+    font-family: $monospace_font;
+    overflow: hidden;
+    > p:last-child {
+      margin-bottom: 0;
+    }
+    i:last-child:hover,i:last-child:active {
+      color: darken($brand-info, 10%);
+    }
+  }
+}
+/* pagination styles */
+.pagination > .active > a {
+  background-color: $brand-primary !important;
+}
+.disabled {
+  cursor: default;
+  pointer-events: none;
+}
+/* filter menu styles */
+.filter-menu {
+  .list-group-item.active-filter {
+    background-color: $brand-primary;
+    a {
+      color: #fff;
+    }
+  }
+  a {
+    color: $brand-primary;
+    display: block;
+    text-decoration: none;
+  }
+}
+.modal-header {
+  border-bottom: 0;
+}
+* {
+  border-radius: 0 !important;
+}

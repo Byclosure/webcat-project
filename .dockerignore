@@ -1,0 +1,6 @@
+.git
+config/application.yml
+spec
+doc
+features
+coverage

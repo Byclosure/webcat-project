@@ -1,0 +1,5 @@
+.col-sm-2
+  .form-holder
+    = form_for @project, :url => transfer_project_path(@project), html: { class: "edit_project form-horizontal" }, method: :put do |f|
+      .text-right
+        = f.submit empty_repo ? "Clone repository" : "Update repository", class: "btn btn-save"

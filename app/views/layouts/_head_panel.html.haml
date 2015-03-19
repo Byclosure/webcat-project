@@ -1,0 +1,46 @@
+%header.navbar.navbar-static-top.navbar-gitlab
+  .navbar-inner
+    .container
+      %div.app_logo
+        %span.separator
+        = link_to root_path, class: "home has_bottom_tooltip", title: "Dashboard" do
+          %h1 Webcat
+        %span.separator
+      %h1.title= title
+
+      %button.navbar-toggle{"data-target" => ".navbar-collapse", "data-toggle" => "collapse", type: "button"}
+        %span.sr-only Toggle navigation
+        %i.icon-reorder
+
+      .navbar-collapse.collapse
+        %ul.nav.navbar-nav
+          %li.hidden-sm.hidden-xs
+            %a
+              %div.hide.turbolink-spinner
+                %i.icon-refresh.icon-spin
+          - if current_user.can_create_project?
+            %li
+              = link_to new_project_path, title: "New project", class: 'has_bottom_tooltip', 'data-original-title' => 'New project'  do
+                %i.icon-plus
+          %li
+            = link_to destroy_user_session_path, class: "logout", method: :delete, title: "Logout", class: 'has_bottom_tooltip', 'data-original-title' => 'Logout'  do
+              %i.icon-signout
+          %li
+            %small.title
+              = project_link_to_user
+              = link_to profile_path, class: "profile-pic", id: 'profile-pic' do
+                = image_tag avatar_icon(current_user.email, 26), alt: 'Profile Settings'
+
+:javascript
+  var logoutButton = $("[data-original-title='Logout']")[0];
+  logoutButton.onclick = function(event) {
+    $.ajax({
+      url: logoutButton.href,
+      type: 'DELETE',
+      dataType: "json",
+      data: { authenticity_token: "#{form_authenticity_token}", commit: "" }
+    }).complete(function() {
+      window.location.replace("#{new_user_session_path}")
+    });
+    return false;
+  };

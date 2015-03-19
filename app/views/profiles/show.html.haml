@@ -1,0 +1,132 @@
+%h3.page-title
+  Profile settings
+  
+%hr
+
+
+
+= form_for @user, url: profile_path, method: :put, html: { multipart: true, class: "edit_user form-horizontal" }, authenticity_token: true do |f|
+  -if @user.errors.any?
+    %div.alert.alert-danger
+      %ul
+        - @user.errors.full_messages.each do |msg|
+          %li= msg
+  .row
+    .col-md-7
+      .form-group
+        = f.label :name, class: "control-label"
+        .col-sm-10
+          = f.text_field :name, class: "form-control", required: true
+          %span.help-block Enter your name, so people you know can recognize you.
+
+      .form-group
+        = f.label :email, class: "control-label"
+        .col-sm-10
+          - if @user.ldap_user?
+            = f.text_field :email, class: "form-control", required: true, readonly: true
+            %span.help-block.light
+              Email is read-only for LDAP user
+          - else
+            = f.text_field :email, class: "form-control", required: true
+            - if @user.unconfirmed_email.present?
+              %span.help-block
+                We sent confirmation email to
+                %strong #{@user.unconfirmed_email}
+            - else
+              %span.help-block We also use email for avatar detection if no avatar is uploaded.
+    .col-md-5
+      .light-well
+        = image_tag avatar_icon(@user.email, 160), alt: '', class: 'avatar s160'
+
+        .clearfix
+          .profile-avatar-form-option
+            %p.light
+              - if @user.avatar?
+                You can change your avatar here
+                %br
+                or remove the current avatar to revert to #{link_to "gravatar.com", "http://gravatar.com"}
+              - else
+                You can upload an avatar here
+                %br
+                or change it at #{link_to "gravatar.com", "http://gravatar.com"}
+            %hr
+            %a.choose-btn.btn.btn-small.js-choose-user-avatar-button
+              %i.icon-paper-clip
+              %span Choose File ...
+            &nbsp;
+            %span.file_name.js-avatar-filename File name...
+            = f.file_field :avatar, class: "js-user-avatar-input hidden"
+            .light The maximum file size allowed is 100KB.
+            - if @user.avatar?
+              %hr
+              = link_to 'Remove avatar', profile_avatar_path, data: { confirm: "Avatar will be removed. Are you sure?"}, method: :delete, class: "btn btn-remove btn-small remove-avatar"
+  .div
+    = f.submit 'Save changes', class: "btn btn-save"
+
+%br
+%fieldset.user-token
+  %legend
+    User token
+  = form_for @user do |f|
+    %div
+      = f.text_field :webcat_token, disabled: "disabled", class: "form-control"
+
+%br
+- # FIXME: this hsould be a form to @user.key
+%fieldset.update-username
+  %legend
+    SSH Key
+  = form_for @user, url: reset_private_token_profile_path, method: :put do |f|
+    %p
+      Copy and paste this SSH key to your git provider.
+    %div
+      = f.text_area :ssh_key, rows: 4, disabled: "disabled", class: "form-control"
+
+%br
+%fieldset
+  %legend
+    Social Accounts
+  .oauth_select_holder.append-bottom-10
+    %p Click on icon to activate signin with one of the following services
+    - enabled_social_providers.each do |provider|
+      %span{class: oauth_active_class(provider) }
+        = link_to authbutton(provider, 32), omniauth_authorize_path(User, provider)
+
+%br
+%fieldset.update-username
+  %legend
+    Username
+  = form_for @user, url: update_username_profile_path,  method: :put, remote: true do |f|
+    %p
+      Changing your username will change path to all personal projects!
+    %div
+      = f.text_field :username, required: true, class: 'form-control'
+      &nbsp;
+    .loading-gif.hide
+      %p
+        %i.icon-spinner.icon-spin
+        Saving new username
+    %div
+      = f.submit 'Save username', class: "btn btn-save"
+
+%br
+%fieldset.remove-account
+  %legend
+    Remove account
+  = form_for @user, html: {id: "delete_account"}, url: user_registration_path, method: :delete do |f|
+    %p Deleting an account has the following effects:
+    %ul
+      %li All user content like authored issues, snippets, comments will be removed
+      - rp = current_user.personal_projects.count
+      - unless rp.zero?
+        %li #{pluralize rp, 'personal project'} will be removed and cannot be restored
+      - if current_user.solo_owned_groups.present?
+        %li
+          The following groups will be abandoned. You should transfer or remove them:
+          %strong #{current_user.solo_owned_groups.map(&:name).join(', ')}
+    = f.submit 'Delete account', class: "btn btn-remove"
+
+:javascript
+  $('#delete_account').submit(function() {
+    return confirm("REMOVE #{current_user.name}? Are you sure?");
+  });

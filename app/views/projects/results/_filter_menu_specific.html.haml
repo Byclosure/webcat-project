@@ -1,0 +1,23 @@
+%div.panel-heading
+  %b
+    STATUS
+%ul.list-group
+  %li.list-group-item{'class' => has_param?(params, {:filter_status => ScenarioStates::PASSED }) ? 'active-filter' : 'inactive-filter'}
+    =link_to 'Passed',
+      add_or_remove_param(params, {:filter_status => ScenarioStates::PASSED })
+  %li.list-group-item{'class' => has_param?(params, {:filter_status => ScenarioStates::FAILED }) ? 'active-filter' : 'inactive-filter'}
+    =link_to 'Failed',
+      add_or_remove_param(params, {:filter_status => ScenarioStates::FAILED })
+  %li.list-group-item{'class' => has_param?(params, {:filter_status => ScenarioStates::PENDING }) ? 'active-filter' : 'inactive-filter'}
+    =link_to 'Pending',
+      add_or_remove_param(params, {:filter_status => ScenarioStates::PENDING })
+%div.panel-heading
+  %b
+    STATE
+%ul.list-group
+  %li.list-group-item{'class' => has_param?(params, {:filter_wip => true }) ? 'active-filter' : 'inactive-filter'}
+    =link_to 'In Progress',
+      add_or_remove_param(params, {:filter_wip => true }, false)
+  %li.list-group-item{'class' => has_param?(params, {:filter_wip => false }) ? 'active-filter' : 'inactive-filter'}
+    =link_to 'Not In Progress',
+      add_or_remove_param(params, {:filter_wip => false }, false)

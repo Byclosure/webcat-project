@@ -1,0 +1,3 @@
+GITLAB_SHELL_HOME: /webcat/gitlab-shell
+GITLAB_SHELL_REPOSITORIES: /webcat/repositories
+GITLAB_SHELL_HOOKS: /webcat/gitlab-shell-hooks

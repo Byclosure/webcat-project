@@ -1,0 +1,303 @@
+= render 'projects/errors'
+
+-if(!@has_builds)
+  %div.row
+    %div.top-img
+      = image_tag 'no-builds.png', class: 'img-responsive center-block', style: 'max-width: 70%;'
+      %h1.title-green
+        You have no builds yet
+    %div.col-md-10
+      %h2.text-primary
+        Please run your first build
+      .project-edit-content
+        %div
+          .form-holder
+            = form_for @project, html: { class: "edit_project form-horizontal" } do |f|
+              = render 'projects/form_jenkins', f: f, with_schedule: false
+              %hr
+              = render 'projects/form_goals', f: f
+              %div.form-group
+                %div.col-sm-10.col-sm-offset-2
+                  = f.submit 'Save', {:class => 'btn btn-primary btn-save'}
+                  = link_to 'Run now', ci_build_project_path(@project), {:class => (!@project.has_ci_settings? ? 'disabled ' : '') + 'btn btn-success btn-save mlm'}
+-else
+  = stylesheet_link_tag 'nv.d3.min.css'
+  = javascript_include_tag 'd3.v2.min.js'
+  = javascript_include_tag 'nv.d3.min.js'
+
+  / LAST BUILD RESULTS
+  %div.row
+    %div.col-xs-12
+      %h3.text-primary
+        Last Complete Build Results
+      %hr
+    %div.col-md-4
+      %h4.subtitle
+        scenario results
+      %div.panel.panel-default{:style => 'min-height:340px;'}
+        %div.panel-body
+          %div.build-results-chart
+            %svg{:style => 'width:100%;min-height:308px;'}
+        %div.panel-footer
+          = link_to ci_build_project_path(@project), {:class => (!@project.has_ci_settings? ? 'disabled' : '')} do
+            %b.text-success
+              Run now
+            %i.icon.icon-play-sign.icon-large.icon-fixed-width.text-success
+          %span.pull-right
+            = link_to 'See More', project_results_path({:build => @build.id, :build_type => @build.build_type})
+    %div.col-md-4
+      %h4.subtitle
+        issues breakdown
+      %div.panel.panel-default{:style => 'min-height:340px;'}
+        %div.panel-body
+          %div.breakdown-chart
+            %svg{:style => 'width:100%;min-height:308px;'}
+        %div.panel-footer
+          %span.pull-right
+            = link_to 'See More', project_test_issues_path(({:build => @build.id}))
+          %div.clearfix
+    %div.col-md-4
+      %h4.subtitle
+        scenario states
+      %div.panel.panel-default{:style => 'min-height:378px;'}
+        %div.panel-body
+          %div.state-chart
+            %svg{:style => 'width:100%;min-height:308px;'}
+        %div.panel-footer
+          %span.pull-right
+            = link_to 'See More', project_results_path(({:build => @build.id, :filter_wip => [true]}))
+          %div.clearfix
+    %div.col-md-8
+      %h4.subtitle
+        issues list
+      %div.panel.panel-default{:style => 'height:235px;overflow-y:auto;'}
+        %ul.list-group.issues-list
+          = render 'issues'
+        %div.panel-footer
+          %span.pull-right
+            = link_to 'See more', project_test_issues_path(({:build => @build.id}))
+          %div.clearfix
+    %div.col-md-4
+      %h4.subtitle
+        goals
+      %div.panel.panel-default{:style => 'min-height:235px;'}
+        %div.panel-body{:style => 'margin-top: 14px;'}
+          %div.goal-passed-chart
+            %svg{:style => 'width:100%;max-height:70px;'}
+          %hr
+          %div.goal-automation-chart
+            %svg{:style => 'width:100%;max-height:70px;'}
+
+  / PROGRESS RESULTS
+  %div.row
+    %div.col-xs-12
+      %h3.text-primary
+        Progress Results
+      %hr
+    %div.col-md-6
+      %h4.subtitle
+        scenario statuses
+      %div.panel.panel-default{:style => 'min-height:380px;'}
+        %div.panel-body
+          %div.progress-global-chart
+            %svg{:style => 'width:100%;min-height:348px;'}
+    %div.col-md-6
+      %h4.subtitle
+        trends
+      %div.panel.panel-default{:style => 'min-height:380px;'}
+        %div.panel-body
+          %div.progress-chart
+            %svg{:style => 'width:100%; min-height:348px;'}
+  %div.row
+    %div.col-xs-12
+      %h3.text-primary
+        Scenario Executions
+      %hr
+    %div.col-md-6
+      %h4.subtitle
+        last 10 feature runs
+      %div.panel.panel-default{:style => 'height:195px;overflow-y: auto;'}
+        %ul.list-group
+          = render 'builds', builds: @individual_builds
+    %div.col-md-6
+      %h4.subtitle
+        last 10 complete runs
+      %div.panel.panel-default{:style => 'height:195px;overflow-y: auto;'}
+        %ul.list-group
+          = render 'builds', builds: @ci_builds
+
+:javascript
+
+  if(#{@has_builds}) {
+
+    if(#{!@goal_passed_target.nil?}) {
+      nv.addGraph(function() {
+        var chart = nv.models.bulletChart();
+
+        chart.tickFormat(function (d) {
+          return d + '%';
+        });
+
+        d3.select('.goal-passed-chart svg')
+          .datum({
+             "title":"Goal",
+             "subtitle":"Passed Features",
+             "ranges":[0,0,100],
+             "measures":[#{@goal_passed_current}],
+             "markers":[#{@goal_passed_target}],
+             "markerLabels":['Target'],
+             "measureLabels":['Current Value'],
+           })
+          .transition().duration(1000)
+          .call(chart);
+
+        return chart;
+      });
+    }
+
+    if(#{!@goal_passed_target.nil?}) {
+        nv.addGraph(function() {
+          var chart = nv.models.bulletChart();
+
+          chart.tickFormat(function (d) {
+            return d + '%';
+          });
+
+          d3.select('.goal-automation-chart svg')
+            .datum({
+               "title":"Goal",
+               "subtitle":"Automation",
+               "ranges":[0,0,100],
+               "measures":[#{@goal_automation_current}],
+               "markers":[#{@goal_automation_target}],
+               "markerLabels":['Target'],
+               "measureLabels":['Current Value'],
+             })
+            .transition().duration(1000)
+            .call(chart);
+
+          return chart;
+        });
+      }
+
+    nv.addGraph(function() {
+        var chart = nv.models.multiBarChart()
+          .transitionDuration(350)
+          .rotateLabels(0)
+          .showControls(true)
+          .groupSpacing(0.1)
+          .stacked(true)
+          .reduceXTicks(false)
+          .color(["#d9534f", "#5cb85c"])
+        ;
+
+        chart.xAxis
+          .axisLabel('Build Number')
+          .rotateLabels(-25);
+
+        chart.yAxis
+          .axisLabel('Number of Scenarios')
+          .tickFormat(function(d) {return ((d%1)==0 && d>=0) ? d : ""});
+
+        d3.select('.progress-global-chart svg')
+            .datum(#{@progress_global_data.to_json})
+            .call(chart);
+
+        nv.utils.windowResize(chart.update);
+
+        return chart;
+    });
+
+    nv.addGraph(function() {
+      var chart = nv.models.lineChart()
+                    .margin({left: 100})
+                    .useInteractiveGuideline(true)
+                    .transitionDuration(350)
+                    .showLegend(true)
+                    .showYAxis(true)
+                    .showXAxis(true)
+                    .color(['#d9534f', '#c0392b', '#f0ad4e', '#777']);
+
+      chart.yAxis
+        .axisLabel('Number of Issues');
+
+      chart.xAxis
+        .tickValues(d3.range(#{@progress_label}.length-1))
+        .axisLabel('Build Number');
+
+      chart.xAxis
+        .tickFormat(function(d) {return #{@progress_label}[d]})
+        .rotateLabels(-25);
+
+      chart.yAxis
+            .tickFormat(function(d) {return ((d%1)==0 && d>=0) ? d : ""});
+
+      d3.select('.progress-chart svg')
+          .datum(#{@progress_data.to_json})
+          .call(chart);
+
+      nv.utils.windowResize(function() { chart.update() });
+
+      return chart;
+    });
+
+    nv.addGraph(function() {
+      var chart = nv.models.pieChart()
+          .x(function(d) { return d.label })
+          .y(function(d) { return d.value })
+          .valueFormat(d3.format('d'))
+          .showLabels(true)
+          .labelThreshold(.05)
+          .labelType("value")
+          .donut(true)
+          .donutRatio(0.35)
+          .color(["#d9534f", "#f0ad4e", "#5cb85c"])
+          ;
+
+        d3.select(".build-results-chart svg")
+            .datum(#{@current_global_data.to_json})
+            .transition().duration(350)
+            .call(chart);
+
+      return chart;
+    });
+
+    nv.addGraph(function() {
+      var chart = nv.models.pieChart()
+          .x(function(d) { return d.label })
+          .y(function(d) { return d.value })
+          .valueFormat(d3.format('d'))
+          .showLabels(true)
+          .labelThreshold(.05)
+          .labelType("value")
+          .donut(true)
+          .donutRatio(0.35)
+          .color(['#d9534f', '#c0392b', '#f0ad4e', '#777'])
+          ;
+
+        d3.select(".breakdown-chart svg")
+            .datum(#{@breakdown_data.to_json})
+            .transition().duration(350)
+            .call(chart);
+
+      return chart;
+    });
+
+    nv.addGraph(function() {
+      var chart = nv.models.pieChart()
+          .x(function(d) { return d.label })
+          .y(function(d) { return d.value })
+          .valueFormat(d3.format('d'))
+          .showLabels(true)
+          .labelThreshold(.05)
+          .labelType("value")
+          .donut(false);
+
+        d3.select(".state-chart svg")
+            .datum(#{@state_data.to_json})
+            .transition().duration(350)
+            .call(chart);
+
+      return chart;
+    });
+  }

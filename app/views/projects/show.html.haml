@@ -1,0 +1,50 @@
+= render "home_panel"
+
+.activities.col-md-10
+  - iframe_base_style = "overflow-y: hidden; border: none; width: 100%;";
+  %iframe{ src: @last_build_url, id: "report-iframe", class: "col-lg-18", seamless: "seamless", style: !@builds.empty? && !@builds.first.status.nil? ? iframe_base_style : "#{iframe_base_style}display:none;", onload: "askForSize();" }
+  %div{id: "in-progress-warning", style: !@builds.empty? && @builds.first.status.nil? ? "display:block;" : "display:none;"}
+    .nothing-here-block The report is not available at the moment. Please refresh in a few minutes.
+
+- if @valid_ci_settings
+  .side.col-md-2.hidden-sm.hidden-xs
+    = render 'builds', with_links: true, with_status: false
+
+:javascript
+  var links = document.querySelectorAll("a.project");
+  for(var i =0; i < links.length; i++) {
+    links[i].onclick = function(event) {
+      var iframe = document.querySelector("iframe");
+      var warning = document.querySelector("#in-progress-warning");
+
+      var url = event.currentTarget.getAttribute("data-url");
+      var status = event.currentTarget.getAttribute("data-status");
+
+      if(status == null) {
+        warning.style.display = "block";
+        iframe.style.display = "none";
+      } else {
+        //iframe.onload="askForSize();iframe.style.display = 'block';"
+        iframe.src = url;
+
+        warning.style.display = "none";
+        iframe.style.display = "block";
+      }
+    }
+  }
+
+  askForSize = function() {
+    iframe = document.querySelector('iframe');
+    iframe.contentWindow.postMessage('sizing?', '#{@project.ci_url}');
+  }
+
+  handleSizingResponse = function(e) {
+    var action = e.data.split(':')[0]
+    if(action == 'sizing') {
+      iframe = document.querySelector('iframe');
+      iframe.height = e.data.split(':')[1].split(',')[0] + 'px';
+    } else {
+      console.log("Unknown message: "+e.data);
+    }
+  }
+  window.addEventListener('message', handleSizingResponse, false);
